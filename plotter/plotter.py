@@ -6,7 +6,7 @@ from matplotlib2tikz import save as tikz_save
 from enum import Enum
 
 
-class PlotterType:
+class PlotterType(Enum):
     MATRIX = 1
     SCATTER = 2
     HISTOGRAM = 3
