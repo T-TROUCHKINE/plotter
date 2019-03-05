@@ -3,6 +3,9 @@
 ## Description
 Plotter is a plotting library based on `matplotlib`. It intends to simplify the plotting of data in Python by creating a descriptive approach for plots. The plots can be static or dynamic.
 
+## Source code location
+https://github.com/T-TROUCHKINE/plotter
+
 ## Installation
 `python3 setup.py install`
 
