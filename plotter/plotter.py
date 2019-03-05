@@ -3,6 +3,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib2tikz import save as tikz_save
 
+from enum import Enum
+
+class PlotterType:
+    MATRIX = 1
+    SCATTER = 2
+    HISTOGRAM = 3
+    TRACE = 4
+    PLOT = 5
+    MULTITRACE = 6
+    BAR = 7
+
+
 class Plotter:
     def __init__(self, to_plot, figsuptitle=None, figsize=(20, 20), tikz_file=""):
         self.figsize = figsize
@@ -192,20 +204,20 @@ class Plotter:
         self.set_informations()
         for i, axe in enumerate(self.axes):
             to_plot = self.to_plot[i]
-            if to_plot["type"] == "matrix":
+            if to_plot["type"] == "matrix" or to_plot["type"] == PlotterType.MATRIX:
                 self.plot_matrix(to_plot, axe)
-            elif to_plot["type"] == "scatter":
+            elif to_plot["type"] == "scatter" or to_plot["type"] == PlotterType.SCATTER:
                 axe.scatter(to_plot["data"][0], to_plot["data"][1])
-            elif to_plot["type"] == "histogram":
+            elif to_plot["type"] == "histogram" or to_plot["type"] == PlotterType.HISTOGRAM:
                 axe.hist(to_plot["data"])
-            elif to_plot["type"] == "trace":
+            elif to_plot["type"] == "trace" or to_plot["type"] == PlotterType.TRACE:
                 axe.plot(to_plot["data"])
-            elif to_plot["type"] == "plot":
+            elif to_plot["type"] == "plot" or to_plot["type"] == PlotterType.PLOT:
                 axe.plot(to_plot["data"][0], to_plot["data"][1])
-            elif to_plot["type"] == "multitrace":
+            elif to_plot["type"] == "multitrace" or to_plot["type"] == PlotterType.MULTITRACE:
                 for data in to_plot["data"]:
                     axe.plot(data)
-            elif to_plot["type"] == "bar":
+            elif to_plot["type"] == "bar" or to_plot["type"] == PlotterType.BAR:
                 self.plot_bar(to_plot, axe)
 
     def export_tikz(self, filename="tikz_fig.tex"):
