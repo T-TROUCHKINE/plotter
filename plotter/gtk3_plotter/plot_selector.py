@@ -1,15 +1,16 @@
 import sys
 import gi
-gi.require_version('Gtk', '3.0')
+
+gi.require_version("Gtk", "3.0")
 from gi.repository import GLib, Gtk, GObject
 
 from plotter import Plotter
 
-from matplotlib.backends.backend_gtk3agg import (
-    FigureCanvasGTK3Agg as FigureCanvas)
+from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
 import numpy as np
 import threading
 import time
+
 
 class PlotSelector(Gtk.Box):
     def __init__(self, figs, update_func=None):
@@ -89,7 +90,7 @@ class PlotSelector(Gtk.Box):
     def __create_canvas(self):
         fig = self.__init_fig()
         canvas = FigureCanvas(fig)
-        canvas.set_size_request(400,300)
+        canvas.set_size_request(400, 300)
         return canvas
 
     def __update_fig(self, update=True):
