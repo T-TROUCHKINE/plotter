@@ -3,6 +3,19 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib2tikz import save as tikz_save
 
+from enum import Enum
+
+
+class PlotterType(Enum):
+    MATRIX = 1
+    SCATTER = 2
+    HISTOGRAM = 3
+    TRACE = 4
+    PLOT = 5
+    MULTITRACE = 6
+    BAR = 7
+
+
 class Plotter:
     def __init__(self, to_plot, figsuptitle=None, figsize=(20, 20), tikz_file=""):
         self.figsize = figsize
@@ -71,11 +84,11 @@ class Plotter:
             i = 0
             j = 0
             for k in range(self.nb_to_plot):
-                self.axes.append(axe[i,j])
-                i+=1
+                self.axes.append(axe[i, j])
+                i += 1
                 if i == nb_rows:
-                    j+=1
-                    i=0
+                    j += 1
+                    i = 0
 
     def set_titles(self):
         if self.show_titles:
@@ -111,16 +124,19 @@ class Plotter:
     def get_bounds_and_norm(self, matrix):
         if matrix.min() != matrix.max():
             bounds = np.linspace(
-                int(matrix.min()), int(matrix.max()),
-                int(matrix.max() - matrix.min()) + 1)
+                int(matrix.min()),
+                int(matrix.max()),
+                int(matrix.max() - matrix.min()) + 1,
+            )
             norm = mpl.colors.BoundaryNorm(
-                np.arange(matrix.min() - 0.5,
-                          matrix.max() + 1 + 0.5, 1), self.cmap.N)
+                np.arange(matrix.min() - 0.5, matrix.max() + 1 + 0.5, 1), self.cmap.N
+            )
             return bounds, norm
         bounds = np.linspace(matrix.min() - 1, matrix.min() + 1, 3)
         norm = mpl.colors.BoundaryNorm(
-            np.arange(matrix.min() - 0.5 - 1,
-                      matrix.max() + 1 + 0.5 + 1, 1), self.cmap.N)
+            np.arange(matrix.min() - 0.5 - 1, matrix.max() + 1 + 0.5 + 1, 1),
+            self.cmap.N,
+        )
         return bounds, norm
 
     def remove_colorbars(self):
@@ -177,7 +193,8 @@ class Plotter:
                 horizontalalignment="center",
                 verticalalignment="center",
                 color=data_value_color,
-                fontsize=data_value_fontsize)
+                fontsize=data_value_fontsize,
+            )
 
     def plot_bar(self, to_plot, axe):
         width = self.get_bar_width(to_plot)
@@ -192,20 +209,26 @@ class Plotter:
         self.set_informations()
         for i, axe in enumerate(self.axes):
             to_plot = self.to_plot[i]
-            if to_plot["type"] == "matrix":
+            if to_plot["type"] == "matrix" or to_plot["type"] == PlotterType.MATRIX:
                 self.plot_matrix(to_plot, axe)
-            elif to_plot["type"] == "scatter":
+            elif to_plot["type"] == "scatter" or to_plot["type"] == PlotterType.SCATTER:
                 axe.scatter(to_plot["data"][0], to_plot["data"][1])
-            elif to_plot["type"] == "histogram":
+            elif (
+                to_plot["type"] == "histogram"
+                or to_plot["type"] == PlotterType.HISTOGRAM
+            ):
                 axe.hist(to_plot["data"])
-            elif to_plot["type"] == "trace":
+            elif to_plot["type"] == "trace" or to_plot["type"] == PlotterType.TRACE:
                 axe.plot(to_plot["data"])
-            elif to_plot["type"] == "plot":
+            elif to_plot["type"] == "plot" or to_plot["type"] == PlotterType.PLOT:
                 axe.plot(to_plot["data"][0], to_plot["data"][1])
-            elif to_plot["type"] == "multitrace":
+            elif (
+                to_plot["type"] == "multitrace"
+                or to_plot["type"] == PlotterType.MULTITRACE
+            ):
                 for data in to_plot["data"]:
                     axe.plot(data)
-            elif to_plot["type"] == "bar":
+            elif to_plot["type"] == "bar" or to_plot["type"] == PlotterType.BAR:
                 self.plot_bar(to_plot, axe)
 
     def export_tikz(self, filename="tikz_fig.tex"):

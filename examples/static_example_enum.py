@@ -2,7 +2,7 @@ import sys
 import numpy as np
 import time
 
-from plotter import Plotter
+from plotter import Plotter, PlotterType
 
 
 def build_test():
@@ -17,14 +17,14 @@ def build_test():
     to_plot = [
         {
             "title": "Test matrix",
-            "type": "matrix",
+            "type": PlotterType.MATRIX,
             "data": matrix,
             "x_label": "Abscissa",
             "y_label": "Orderly",
         },
         {
             "title": "Bars monitoring",
-            "type": "bar",
+            "type": PlotterType.BAR,
             "data": bar,
             "x_label": "X axis",
             "y_label": None,
@@ -35,28 +35,28 @@ def build_test():
         },
         {
             "title": "Random scatter",
-            "type": "scatter",
+            "type": PlotterType.SCATTER,
             "data": scatter,
             "x_label": None,
             "y_label": "Label",
         },
         {
             "title": "Some histogram",
-            "type": "histogram",
+            "type": PlotterType.HISTOGRAM,
             "data": [hist, hist2],
             "x_label": "The X axis",
             "y_label": "Some value",
         },
         {
             "title": "Side channel",
-            "type": "multitrace",
-            "data": [trace],
+            "type": PlotterType.TRACE,
+            "data": trace,
             "x_label": "Time",
             "y_label": "Consumption",
         },
         {
             "title": "Scatter from matrix",
-            "type": "scatter",
+            "type": PlotterType.SCATTER,
             "data": scatter2,
             "x_label": None,
             "y_label": None,
@@ -68,6 +68,4 @@ def build_test():
 
 to_plot = build_test()
 pl = Plotter(to_plot, figsuptitle="Dynamic example")
-while 1:
-    pl.set_to_plot(build_test())
-    pl.show(blocking=False)
+pl.show()
