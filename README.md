@@ -7,6 +7,10 @@ Plotter is a plotting library based on `matplotlib`. It intends to simplify the 
 https://github.com/T-TROUCHKINE/plotter
 
 ## Installation
+### From PIP
+`pip install plotter`
+
+### From source
 `python3 setup.py install`
 
 ## Generate documentation
