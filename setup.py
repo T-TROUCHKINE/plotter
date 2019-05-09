@@ -14,7 +14,7 @@ setuptools.setup(
     url="http://thomas.trouchkine.com/projects/plotter",
     packages=setuptools.find_packages(),
     classifiers=[
-        "Programming Language :: Python :: 3",
+        "Programming Language :: Python 3",
         "Operating System :: OS Independent",
     ],
 )
