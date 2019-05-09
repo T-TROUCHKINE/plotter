@@ -122,7 +122,10 @@ class Plotter:
                 axe.set_xticks(ind)
                 if "x_ticklabels_fontsize" in self.to_plot[i]:
                     fontdict = {"fontsize": self.to_plot[i]["x_ticklabels_fontsize"]}
-                axe.set_xticklabels(self.to_plot[i]["x_ticklabels"], fontdict)
+                    axe.set_xticklabels(self.to_plot[i]["x_ticklabels"], fontdict)
+            elif "x_ticklabels_fontsize" in self.to_plot[i]:
+                for xticklabel in axe.get_xticklabels():
+                    xticklabel.set_fontsize(self.to_plot[i]["x_ticklabels_fontsize"])
             if "y_ticklabels_fontsize" in self.to_plot[i]:
                 for yticklabel in axe.get_yticklabels():
                     yticklabel.set_fontsize(self.to_plot[i]["y_ticklabels_fontsize"])
@@ -192,10 +195,6 @@ class Plotter:
         else:
             data_value_fontsize = 12
 
-        if "rotate_x_labels" in to_plot:
-            if to_plot["rotate_x_labels"]:
-                axe.autofmt_xdate()
-
         return data_value_color, data_value_fontsize
 
     def show_text_value(self, to_plot, axe):
@@ -218,6 +217,9 @@ class Plotter:
         if "show_data_value" in to_plot:
             if to_plot["show_data_value"]:
                 self.show_text_value(to_plot, axe)
+        if "rotate_x_labels" in to_plot:
+            if to_plot["rotate_x_labels"]:
+                plt.setp(axe.get_xticklabels(), rotation=30, ha='right')
 
     def plot_multibar(self, to_plot, axe):
         w = self.get_bar_width(to_plot)
@@ -282,7 +284,6 @@ class Plotter:
         else:
             self.clean_axes()
             self.plot_data()
-            plt.pause(0.1)
 
     def init_plot(self):
         self.init_fig_subplot()

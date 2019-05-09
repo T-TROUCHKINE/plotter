@@ -8,17 +8,27 @@ import numpy as np
 
 from plotter.gtk3_plotter import PlotSelector
 
+"""
+Figures to plot with initial values
+"""
+mat = np.random.random((100, 100))
+trace = np.random.random(100)
+to_plot = [
+    {
+        "title": "Matrix",
+        "type": "matrix",
+        "data": mat
+    },
+    {
+        "title": "Trace",
+        "type": "trace",
+        "data": trace},
+]
 
-def create_to_plot():
-    mat = np.random.random((100, 100))
-    trace = np.random.random(100)
-    to_plot = [
-        {"title": "Matrix", "type": "matrix", "data": mat},
-        {"title": "Trace", "type": "trace", "data": trace},
-    ]
-    return to_plot
-
-
+"""
+Update function Depending of the value of "fig" which select the figure to
+plot, the function return the data to plot
+"""
 def update_fig(fig):
     if fig == 0:
         return np.random.random((100, 100))
@@ -27,10 +37,7 @@ def update_fig(fig):
     else:
         return None
 
-
-figs = create_to_plot()
-
-ps = PlotSelector(figs, update_fig)
+ps = PlotSelector(to_plot, update_fig)
 
 win = Gtk.Window()
 win.connect("delete-event", Gtk.main_quit)

@@ -9,3 +9,4 @@ clean:
 	rm -rf dist
 	rm -rf MANIFEST
 	rm -rf build
+	rm -rf *.egg-info
