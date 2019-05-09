@@ -21,7 +21,7 @@ https://github.com/T-TROUCHKINE/plotter
 The code:
 ```python
 import numpy as np
-from src.plotter import Plotter
+from plotter import Plotter
 
 x = np.linspace(-np.pi, np.pi, 201)
 
@@ -42,7 +42,7 @@ Gives:
 The code:
 ```python
 import numpy as np
-from src.plotter import Plotter
+from plotter import Plotter
 
 x = np.linspace(-np.pi, np.pi, 201)
 
