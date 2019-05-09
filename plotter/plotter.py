@@ -2,9 +2,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib2tikz import save as tikz_save
-
 from enum import Enum
-
 
 class PlotterType(Enum):
     MATRIX = 1
@@ -14,7 +12,7 @@ class PlotterType(Enum):
     PLOT = 5
     MULTITRACE = 6
     BAR = 7
-
+    MULTIBAR = 8
 
 class Plotter:
     def __init__(self, to_plot, figsuptitle=None, figsize=(20, 20), tikz_file=""):
@@ -96,12 +94,25 @@ class Plotter:
                 if "title" in self.to_plot[i]:
                     axe.set_title(self.to_plot[i]["title"])
 
+    def get_label_fontsize(self, to_plot, coord):
+        param = "{}_label_fontsize".format(coord)
+        if param in to_plot:
+            return to_plot[param]
+        else:
+            return 12
+
+    def get_xlabel_fontsize(self, to_plot):
+        return self.get_label_fontsize(to_plot, "x")
+
+    def get_ylabel_fontsize(self, to_plot):
+        return self.get_label_fontsize(to_plot, "y")
+
     def set_labels(self):
         for i, axe in enumerate(self.axes):
             if "x_label" in self.to_plot[i]:
-                axe.set_xlabel(self.to_plot[i]["x_label"])
+                axe.set_xlabel(self.to_plot[i]["x_label"], fontsize=self.get_xlabel_fontsize(self.to_plot[i]))
             if "y_label" in self.to_plot[i]:
-                axe.set_ylabel(self.to_plot[i]["y_label"])
+                axe.set_ylabel(self.to_plot[i]["y_label"], fontsize=self.get_ylabel_fontsize(self.to_plot[i]))
 
     def set_ticklabels(self):
         for i, axe in enumerate(self.axes):
@@ -115,6 +126,8 @@ class Plotter:
             if "y_ticklabels_fontsize" in self.to_plot[i]:
                 for yticklabel in axe.get_yticklabels():
                     yticklabel.set_fontsize(self.to_plot[i]["y_ticklabels_fontsize"])
+            if "ticklabels_fontsize" in self.to_plot[i]:
+                axe.tick_params(labelsize=self.to_plot[i]["ticklabels_fontsize"])
 
     def set_grid(self):
         for i, axe in enumerate(self.axes):
@@ -164,6 +177,8 @@ class Plotter:
         bounds, norm = self.get_bounds_and_norm(to_plot["data"])
         mat = axe.matshow(to_plot["data"], cmap=self.cmap, norm=norm)
         colorbar = plt.colorbar(mat, ax=axe, ticks=bounds)
+        if "colorbar_fontsize" in to_plot:
+            colorbar.ax.tick_params(labelsize=to_plot["colorbar_fontsize"])
         self.colorbars.append(colorbar)
 
     def get_data_value_caract(self, to_plot, axe):
@@ -204,6 +219,22 @@ class Plotter:
             if to_plot["show_data_value"]:
                 self.show_text_value(to_plot, axe)
 
+    def plot_multibar(self, to_plot, axe):
+        w = self.get_bar_width(to_plot)
+        for i, data in enumerate(to_plot["data"]):
+            n = len(to_plot["data"])
+            x_pos = [x + 1 + 2*w*n - (n*w/2) + ( (2*i+1)*(w/2) ) for x in range(len(data)) ]
+            if "colors" in to_plot:
+                axe.bar(x_pos, data, width=w, align="center", color=to_plot["colors"][i])
+            else:
+                axe.bar(x_pos, data, width=w, align="center")
+            ind = [x + 1 + 2*w*n for x in range(len(to_plot["x_ticklabels"]))]
+            axe.set_xticks(ind)
+
+    def add_legend(self, to_plot, axe):
+        if "legend" in to_plot:
+            axe.legend(to_plot["legend"])
+
     def plot_data(self):
         self.clean_plot()
         self.set_informations()
@@ -230,6 +261,9 @@ class Plotter:
                     axe.plot(data)
             elif to_plot["type"] == "bar" or to_plot["type"] == PlotterType.BAR:
                 self.plot_bar(to_plot, axe)
+            elif to_plot["type"] == "multibar" or to_plot["type"] == PlotterType.MULTIBAR:
+                self.plot_multibar(to_plot, axe)
+            self.add_legend(to_plot, axe)
 
     def export_tikz(self, filename="tikz_fig.tex"):
         self.plot_data()

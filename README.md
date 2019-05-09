@@ -6,6 +6,17 @@ Plotter is a plotting library based on `matplotlib`. It intends to simplify the 
 ## Source code location
 https://github.com/T-TROUCHKINE/plotter
 
+## Prerequisities
+### Linux packages
+- tk :
+  - ArchLinux : `pacman -S tk`
+  - Debian : `apt install tk`
+
+### Python modules
+- matplotlib : `pip install matplotlib`
+- matplotlib2tikz : `pip install matplotlib2tikz`
+- numpy : `pip install numpy`
+
 ## Installation
 ### From PIP
 `pip install plotter`

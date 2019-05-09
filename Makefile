@@ -9,4 +9,3 @@ clean:
 	rm -rf dist
 	rm -rf MANIFEST
 	rm -rf build
-	rm -rf plotter.egg-info
