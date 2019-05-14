@@ -5,6 +5,12 @@ from matplotlib2tikz import save as tikz_save
 from enum import Enum
 
 class PlotterType(Enum):
+    """Class containing all possible ways to plot data using plotter.
+
+    Use these values for the "type" paramater in the description of your
+    figure.
+
+    """
     MATRIX = 1
     SCATTER = 2
     HISTOGRAM = 3
@@ -15,7 +21,32 @@ class PlotterType(Enum):
     MULTIBAR = 8
 
 class Plotter:
+    """Class used for plotting data.
+
+    This class must take as argument a dictionary containing the description
+    and the data of the figures you want to plot.
+
+    """
     def __init__(self, to_plot, figsuptitle=None, figsize=(20, 20), tikz_file=""):
+        """Constructor function of the Class Plotter.
+
+        Initialize the Plotter class with figures to plot or the number of figures to plot.
+
+        Arguments:
+
+        to_plot - a dictionnary containing the figures to plot or an integer
+        containing the number of figures to plot.
+
+        figsuptitle - a string containing the title of the whole plot (default:
+        None)
+
+        figsize - a tuple containing the size of the window containing the
+        figures (default: (20,20))
+
+        tikz_file - a string containing the path to the file where save the
+        Tikz description of the figure (default: "")
+
+        """
         self.figsize = figsize
         self.figsuptitle = figsuptitle
         self.fig = None
