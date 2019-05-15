@@ -1,3 +1,4 @@
-build/*
-dist/*
-plotter.egg-info/*
+build
+dist
+plotter.egg-info
+__pycache__

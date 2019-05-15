@@ -38,13 +38,13 @@ class Plotter:
         containing the number of figures to plot.
 
         figsuptitle - a string containing the title of the whole plot (default:
-        None)
+        None).
 
         figsize - a tuple containing the size of the window containing the
-        figures (default: (20,20))
+        figures (default: (20,20)).
 
         tikz_file - a string containing the path to the file where save the
-        Tikz description of the figure (default: "")
+        Tikz description of the figure (default: "").
 
         """
         self.figsize = figsize
@@ -74,6 +74,8 @@ class Plotter:
         """Set the show_titles parameter. If set to True the figures will all have a
         title above their plot.
 
+        Arguments:
+
         val - the boolean value to set show_titles to.
 
         TODO: use the setter/getter function of Python
@@ -90,6 +92,8 @@ class Plotter:
     def set_colormap(self, cmap):
         """Set the colormap. Mainly used in matrix figures.
 
+        Arguments:
+
         cmap - the cmap object from Matplotlib to use as a colormap.
 
         """
@@ -103,6 +107,8 @@ class Plotter:
 
     def set_figsize(self, figsize):
         """Set the size of the window plotting the figure.
+
+        Arguments:
 
         figsize - a tuple describing the size of window to use.
 
@@ -118,6 +124,8 @@ class Plotter:
     def set_figsuptitle(self, suptitle):
         """Set the main title of the plot.
 
+        Arguments:
+
         suptitle - the string containing the main title to use for the plot.
 
         """
@@ -125,6 +133,8 @@ class Plotter:
 
     def set_to_plot(self, to_plot):
         """Set the figures plot.
+
+        Arguments:
 
         to_plot - a dictionnary containing the description of the figures to
         plot.
@@ -176,6 +186,8 @@ class Plotter:
     def get_label_fontsize(self, to_plot, coord):
         """Return the label font size parsed from the to_plot dictionnary.
 
+        Arguments:
+
         to_plot - the dictionnary to parse for getting the label font size.
 
         coord - the axis of the label to get the font size.
@@ -192,6 +204,8 @@ class Plotter:
         """Return the label font size of the label on x axis parsed from the to_plot
         dictionnary.
 
+        Arguments:
+
         to_plot - the dictionnary to parse for getting the label font size.
 
         TODO: Make private.
@@ -201,6 +215,8 @@ class Plotter:
     def get_ylabel_fontsize(self, to_plot):
         """Return the label font size of the label on y axis parsed from the to_plot
         dictionnary.
+
+        Arguments:
 
         to_plot - the dictionnary to parse for getting the label font size.
 
@@ -256,6 +272,8 @@ class Plotter:
     def get_bounds_and_norm(self, matrix):
         """Return the needed parameters for a clean colorbar for a Matrix plot.
 
+        Arguments:
+
         matrix - the matrix to build a colorbar to.
 
         TODO: Make private.
@@ -293,6 +311,8 @@ class Plotter:
     def get_bar_width(self, to_plot):
         """Return the bar width parameter parsed from the to_plot dictionnary.
 
+        Arguments:
+
         to_plot - the dictionnary to parse the bar width from.
 
         TODO: Make private.
@@ -325,6 +345,8 @@ class Plotter:
     def plot_matrix(self, to_plot, axe):
         """Plot a matrix.
 
+        Arguments:
+
         to_plot - the dictionnary containing the information for plotting the matrix.
 
         axe - the subfigure where to plot the matrix.
@@ -341,6 +363,8 @@ class Plotter:
 
     def get_data_value_caract(self, to_plot):
         """Return the parameters for the data value to show in bar plot.
+
+        Arguments:
 
         to_plot - the dictionnary to parse for getting the data value parameters.
 
@@ -361,6 +385,8 @@ class Plotter:
 
     def show_text_value(self, to_plot, axe):
         """Add the values of bars as text.
+
+        Arguments:
 
         to_plot - the dictionnary containing the information about how to display the values.
 
@@ -384,6 +410,8 @@ class Plotter:
     def plot_bar(self, to_plot, axe):
         """Plot bars from one data set.
 
+        Arguments:
+
         to_plot - the dictionnary containing the information for the plot.
 
         axe - the subfigure where to plot the bars.
@@ -403,6 +431,8 @@ class Plotter:
 
     def plot_multibar(self, to_plot, axe):
         """Plot bars from multiple data set.
+
+        Arguments:
 
         to_plot - the dictionnary containing the information for the plot.
 
@@ -424,6 +454,8 @@ class Plotter:
 
     def add_legend(self, to_plot, axe):
         """Add a legend to the plot.
+
+        Arguments:
 
         to_plot - the dictionnary to parse for getting legend information.
 
@@ -474,6 +506,8 @@ class Plotter:
         """Export the figure to a tikz file. This method cannot be called after the
         show() method otherwise the result file will not containing the figure.
 
+        Arguments:
+
         filename - the path to the file where to store the tikz description of
         the figure (default: "tikz_fig.tex").
 
@@ -492,6 +526,8 @@ class Plotter:
 
     def show(self, blocking=True):
         """Show the figure.
+
+        Arguments:
 
         blocking - if set to True, the program will stall on this function
         while the window is remained opened (default: True).
