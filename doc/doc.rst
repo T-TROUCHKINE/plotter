@@ -334,7 +334,4 @@ CLASSES
      |      This mapping lists all enum members, including aliases. Note that this
      |      is a read-only view of the internal mapping.
 
-FILE
-    /home/kerzas/Documents/Dev/Python/plotter/plotter/plotter.py
-
 
