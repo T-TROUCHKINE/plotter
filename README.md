@@ -24,9 +24,6 @@ https://github.com/T-TROUCHKINE/plotter
 ### From source
 `python3 setup.py install`
 
-## Generate documentation
-`cd doc && make`
-
 ## Examples
 ### Simplest example:
 The code:
@@ -47,7 +44,7 @@ pl.show()
 ```
 Gives:
 
-![First example](doc/img/ex1.png)
+![First example](img/ex1.png)
 
 ### Multi-plot:
 The code:
@@ -73,5 +70,5 @@ pl.show()
 ```
 Gives:
 
-![Second example](doc/img/ex2.png)
+![Second example](img/ex2.png)
 
