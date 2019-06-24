@@ -541,6 +541,7 @@ class Plotter:
         else:
             self.clean_axes()
             self.plot_data()
+            plt.pause(0.1)
 
     def init_plot(self):
         """Initialize the plot.
