@@ -49,6 +49,11 @@ to_plot = [
         "x_ticklabels": list(np.arange(0,5)),
         "bar_width": 0.3,
     },
+    {
+        "title": "Pie",
+        "type": PlotterType.PIE,
+        "data": np.random.randint(100, size=5)
+    }
 ]
 
 pl = Plotter(to_plot)

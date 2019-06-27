@@ -19,6 +19,7 @@ class PlotterType(Enum):
     MULTITRACE = 6
     BAR = 7
     MULTIBAR = 8
+    PIE = 9
 
 class Plotter:
     """Class used for plotting data.
@@ -467,6 +468,12 @@ class Plotter:
         if "legend" in to_plot:
             axe.legend(to_plot["legend"])
 
+    def plot_pie(self, to_plot, axe):
+        labels = None
+        if "labels" in to_plot:
+            labels = to_plot["labels"]
+        axe.pie(to_plot["data"], autopct='%3.2f%%', labels=labels)
+
     def plot_data(self):
         """Plot the data from the to_plot parameter.
 
@@ -500,6 +507,8 @@ class Plotter:
                 self.plot_bar(to_plot, axe)
             elif to_plot["type"] == "multibar" or to_plot["type"] == PlotterType.MULTIBAR:
                 self.plot_multibar(to_plot, axe)
+            elif to_plot["type"] == "pie" or to_plot["type"] == PlotterType.PIE:
+                self.plot_pie(to_plot, axe)
             self.add_legend(to_plot, axe)
 
     def export_tikz(self, filename="tikz_fig.tex"):

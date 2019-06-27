@@ -27,6 +27,12 @@ to_plot = [
         "x_label_fontsize": 20,
         "y_label_fontsize": 8
     },
+    {
+        "title": "Labels on a pie",
+        "type": "pie",
+        "data": np.random.randint(100, size=5),
+        "labels": ["data{}".format(i) for i in range(5)]
+    }
 ]
 
 pl = Plotter(to_plot)
