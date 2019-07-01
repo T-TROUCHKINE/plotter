@@ -248,9 +248,7 @@ class Plotter:
             if "x_ticklabels" in self.to_plot[i]:
                 ind = np.arange(1, len(self.to_plot[i]["x_ticklabels"]) + 1)
                 axe.set_xticks(ind)
-                if "x_ticklabels_fontsize" in self.to_plot[i]:
-                    fontdict = {"fontsize": self.to_plot[i]["x_ticklabels_fontsize"]}
-                    axe.set_xticklabels(self.to_plot[i]["x_ticklabels"], fontdict)
+                axe.set_xticklabels(self.to_plot[i]["x_ticklabels"], fontdict)
             elif "x_ticklabels_fontsize" in self.to_plot[i]:
                 for xticklabel in axe.get_xticklabels():
                     xticklabel.set_fontsize(self.to_plot[i]["x_ticklabels_fontsize"])
