@@ -495,10 +495,11 @@ class Plotter:
 
         """
         x_coef, y_coef = self.add_scatter_image(to_plot, axe)
+        opacity = self.get_opacity(to_plot)
         for data in to_plot["data"]:
             x_data = [d*x_coef for d in data[0]]
             y_data = [d*y_coef for d in data[1]]
-            axe.scatter(x_data, y_data)
+            axe.scatter(x_data, y_data, alpha=opacity)
 
     def matrix_to_scatter(self, matrix):
         """Convert the given matrix to data for scatter. Every value in the matrix will correspond to a set of data.
@@ -533,13 +534,13 @@ class Plotter:
         axe - the subfigure to work on.
 
         """
-        x_size = shape[0]
-        y_size = shape[1]
+        x_size = shape[1]
+        y_size = shape[0]
         axe.set_xlim((-0.01*x_size, x_size+0.01*x_size))
         axe.set_ylim((-0.01*y_size, y_size+0.01*y_size))
         x0,x1 = axe.get_xlim()
         y0,y1 = axe.get_ylim()
-        axe.set_aspect(abs(x1-x0)/abs(y1-y0))
+        #axe.set_aspect(abs(x1-x0)/abs(y1-y0))
 
     def add_image_to_axe(self, to_plot, axe):
         """Add the image in to_plot as a background.
@@ -579,6 +580,12 @@ class Plotter:
                 if to_plot["revert_x_axis"]:
                     axe.set_xlin(axe.get_xlim()[::-1])
 
+    def get_opacity(self, to_plot):
+        if "opacity" in to_plot:
+            return to_plot["opacity"]
+        else:
+            return 1
+
     def add_scatter_image(self, to_plot, axe):
         """Add the image given in to_plot as a background for the axe. Works only for
         scatter type figures.
@@ -615,18 +622,18 @@ class Plotter:
 
         """
         x_coef, y_coef = self.add_scatter_image(to_plot, axe)
-
         values, values_pos = self.matrix_to_scatter(to_plot["data"])
-
         mini = 0
         maxi = max(values)
         bounds = np.arange(1, maxi+1)
         norm = mpl.colors.BoundaryNorm(np.arange(mini-0.5+1, maxi+0.5+1, 1), self.cmap.N)
+        opacity = self.get_opacity(to_plot)
         for value, data in zip(values, values_pos):
             c_array = [value]*len(data[0])
             x_data = [d*x_coef for d in data[0]]
             y_data = [d*y_coef for d in data[1]]
-            scat = axe.scatter(x_data, y_data, c=c_array, vmax=maxi, vmin=mini, cmap=self.cmap, norm=norm)
+            scat = axe.scatter(x_data, y_data, c=c_array, vmax=maxi, vmin=mini,
+                               cmap=self.cmap, norm=norm, alpha=opacity)
         colorbar = plt.colorbar(scat, ax=axe, ticks=bounds)
         if "colorbar_fontsize" in to_plot:
             colorbar.ax.tick_params(labelsize=to_plot["colorbar_fontsize"])
@@ -646,7 +653,8 @@ class Plotter:
         data = to_plot["data"]
         x_data = [d*x_coef for d in data[0]]
         y_data = [d*y_coef for d in data[1]]
-        axe.scatter(x_data, y_data)
+        opacity = self.get_opacity(to_plot)
+        axe.scatter(x_data, y_data, alpha=opacity)
 
     def plot_data(self):
         """Plot the data from the to_plot parameter.
