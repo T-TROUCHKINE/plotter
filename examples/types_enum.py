@@ -53,6 +53,16 @@ to_plot = [
         "title": "Pie",
         "type": PlotterType.PIE,
         "data": np.random.randint(100, size=5)
+    },
+    {
+        "title": "Multiple Scatter",
+        "type": PlotterType.MULTISCATTER,
+        "data": [np.random.random((50,50)), np.random.random((50,50))],
+    },
+    {
+        "title": "Matrix Scatter",
+        "type": PlotterType.MATRIXSCATTER,
+        "data": np.random.randint(0, 10, (40, 40))
     }
 ]
 

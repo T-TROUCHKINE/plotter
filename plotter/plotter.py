@@ -1,5 +1,6 @@
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 import numpy as np
 from matplotlib2tikz import save as tikz_save
 from enum import Enum
@@ -20,6 +21,8 @@ class PlotterType(Enum):
     BAR = 7
     MULTIBAR = 8
     PIE = 9
+    MULTISCATTER = 10
+    MATRIXSCATTER = 11
 
 class Plotter:
     """Class used for plotting data.
@@ -467,10 +470,183 @@ class Plotter:
             axe.legend(to_plot["legend"])
 
     def plot_pie(self, to_plot, axe):
+        """Plot the data from to_plot as a pie.
+
+        Arguments:
+
+        to_plot - the dictionnary to parse data from.
+
+        axe - the subfigure to work on.
+
+        """
         labels = None
         if "labels" in to_plot:
             labels = to_plot["labels"]
         axe.pie(to_plot["data"], autopct='%3.2f%%', labels=labels)
+
+    def plot_multiscatter(self, to_plot, axe):
+        """Plot the data from to_plot in a scatter way.
+
+        Arguments:
+
+        to_plot - the dictionnary to parse the data from.
+
+        axe - the subfigure to work on.
+
+        """
+        x_coef, y_coef = self.add_scatter_image(to_plot, axe)
+        for data in to_plot["data"]:
+            x_data = [d*x_coef for d in data[0]]
+            y_data = [d*y_coef for d in data[1]]
+            axe.scatter(x_data, y_data)
+
+    def matrix_to_scatter(self, matrix):
+        """Convert the given matrix to data for scatter. Every value in the matrix will correspond to a set of data.
+
+        Arguments:
+
+        matrix - the matrix to convert into a scatter.
+
+        """
+        dim = matrix.shape
+        values = []
+        values_pos = []
+        for x in range(dim[0]):
+            for y in range(dim[1]):
+                value = matrix[x][y]
+                if value != 0:
+                    if not value in values:
+                        values.append(value)
+                        values_pos.append([[],[]])
+                    value_index = values.index(value)
+                    values_pos[value_index][0].append(x)
+                    values_pos[value_index][1].append(y)
+        return values, values_pos
+
+    def redim_axe(self, shape, axe):
+        """Redimension the figure with the given shape.
+
+        Arguments:
+
+        shape - the tuple containing the target width and height of the figure.
+
+        axe - the subfigure to work on.
+
+        """
+        x_size = shape[0]
+        y_size = shape[1]
+        axe.set_xlim((-0.01*x_size, x_size+0.01*x_size))
+        axe.set_ylim((-0.01*y_size, y_size+0.01*y_size))
+        x0,x1 = axe.get_xlim()
+        y0,y1 = axe.get_ylim()
+        axe.set_aspect(abs(x1-x0)/abs(y1-y0))
+
+    def add_image_to_axe(self, to_plot, axe):
+        """Add the image in to_plot as a background.
+
+        Arguments:
+
+        to_plot - the dictionnary to parse for getting information.
+
+        axe - the subfigure to work on.
+
+        """
+        if "image" in to_plot:
+            img = plt.imread(to_plot["image"])
+            axe.imshow(img)
+            self.redim_axe(img.shape, axe)
+            return img.shape
+
+    def revert_axes(self, to_plot, axe):
+        """Change the orientation of the axis.
+
+        Arguments:
+
+        to_plot - the dictionnary to parse for getting information.
+
+        axe - the subfigure to work on.
+
+        """
+        if "revert_axis" in to_plot:
+            if to_plot["revert_axis"]:
+                axe.set_xlin(axe.get_xlim()[::-1])
+                axe.set_ylim(axe.get_ylim()[::-1])
+        else:
+            if "revert_y_axis" in to_plot:
+                if to_plot["revert_y_axis"]:
+                    axe.set_ylim(axe.get_ylim()[::-1])
+            if "revert_x_axis" in to_plot:
+                if to_plot["revert_x_axis"]:
+                    axe.set_xlin(axe.get_xlim()[::-1])
+
+    def add_scatter_image(self, to_plot, axe):
+        """Add the image given in to_plot as a background for the axe. Works only for
+        scatter type figures.
+
+        Arguments:
+
+        to_plot - the dictionnary to parse for getting information.
+
+        axe - the subfigure where to work on.
+
+        """
+        x_coef = 1
+        y_coef = 1
+        if "image" in to_plot:
+            img_shape = self.add_image_to_axe(to_plot, axe)
+            if "scale_to_image" in to_plot:
+                if to_plot["scale_to_image"]:
+                    img_width = img_shape[0]
+                    img_height = img_shape[1]
+                    mat_width = to_plot["data"].shape[0]-1
+                    mat_height = to_plot["data"].shape[1]-1
+                    x_coef = img_width/mat_width
+                    y_coef = img_height/mat_height
+        return x_coef, y_coef
+
+    def plot_matrixscatter(self, to_plot, axe):
+        """Plot the data from to_plot as a matrix in a scatter style with the corresponding colorbar.
+
+        Arguments:
+
+        to_plot - the dictionnary to parse for getting information.
+
+        axe - the subfigure where to work on.
+
+        """
+        x_coef, y_coef = self.add_scatter_image(to_plot, axe)
+
+        values, values_pos = self.matrix_to_scatter(to_plot["data"])
+
+        mini = 0
+        maxi = max(values)
+        bounds = np.arange(1, maxi+1)
+        norm = mpl.colors.BoundaryNorm(np.arange(mini-0.5+1, maxi+0.5+1, 1), self.cmap.N)
+        for value, data in zip(values, values_pos):
+            c_array = [value]*len(data[0])
+            x_data = [d*x_coef for d in data[0]]
+            y_data = [d*y_coef for d in data[1]]
+            scat = axe.scatter(x_data, y_data, c=c_array, vmax=maxi, vmin=mini, cmap=self.cmap, norm=norm)
+        colorbar = plt.colorbar(scat, ax=axe, ticks=bounds)
+        if "colorbar_fontsize" in to_plot:
+            colorbar.ax.tick_params(labelsize=to_plot["colorbar_fontsize"])
+        self.colorbars.append(colorbar)
+
+    def plot_scatter(self, to_plot, axe):
+        """Plot the data from to_plot as a scatter.
+
+        Arguments:
+
+        to_plot - the dictionnary to parse for getting information.
+
+        axe - the subfigure where to work on.
+
+        """
+        x_coef, y_coef = self.add_scatter_image(to_plot, axe)
+        data = to_plot["data"]
+        x_data = [d*x_coef for d in data[0]]
+        y_data = [d*y_coef for d in data[1]]
+        axe.scatter(x_data, y_data)
 
     def plot_data(self):
         """Plot the data from the to_plot parameter.
@@ -485,11 +661,8 @@ class Plotter:
             if to_plot["type"] == "matrix" or to_plot["type"] == PlotterType.MATRIX:
                 self.plot_matrix(to_plot, axe)
             elif to_plot["type"] == "scatter" or to_plot["type"] == PlotterType.SCATTER:
-                axe.scatter(to_plot["data"][0], to_plot["data"][1])
-            elif (
-                to_plot["type"] == "histogram"
-                or to_plot["type"] == PlotterType.HISTOGRAM
-            ):
+                self.plot_scatter(to_plot, axe)
+            elif to_plot["type"] == "histogram" or to_plot["type"] == PlotterType.HISTOGRAM:
                 axe.hist(to_plot["data"])
             elif to_plot["type"] == "trace" or to_plot["type"] == PlotterType.TRACE:
                 axe.plot(to_plot["data"])
@@ -507,7 +680,12 @@ class Plotter:
                 self.plot_multibar(to_plot, axe)
             elif to_plot["type"] == "pie" or to_plot["type"] == PlotterType.PIE:
                 self.plot_pie(to_plot, axe)
+            elif to_plot["type"] == "multiscatter" or to_plot["type"] == PlotterType.MULTISCATTER:
+                self.plot_multiscatter(to_plot, axe)
+            elif to_plot["type"] == "matrixscatter" or to_plot["type"] == PlotterType.MATRIXSCATTER:
+                self.plot_matrixscatter(to_plot, axe)
             self.add_legend(to_plot, axe)
+            self.revert_axes(to_plot, axe)
 
     def export_tikz(self, filename="tikz_fig.tex"):
         """Export the figure to a tikz file. This method cannot be called after the
