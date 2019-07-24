@@ -5,6 +5,8 @@ import numpy as np
 from matplotlib2tikz import save as tikz_save
 from enum import Enum
 
+types_str = ["matrix", "scatter", "histogram", "trace", "plot", "multitrace", "bar", "multibar", "pie", "multiscatter", "matrixscatter"]
+
 class PlotterType(Enum):
     """Class containing all possible ways to plot data using plotter.
 
@@ -31,7 +33,8 @@ class Plotter:
     and the data of the figures you want to plot.
 
     """
-    def __init__(self, to_plot, figsuptitle=None, figsize=(20, 20), tikz_file=""):
+    def __init__(self, to_plot, figsuptitle=None, figsize=(20, 20),
+                 tikz_file="", cmap=plt.cm.jet):
         """Constructor function of the Class Plotter.
 
         Initialize the Plotter class with figures to plot or the number of figures to plot.
@@ -64,7 +67,7 @@ class Plotter:
 
         self.axes = None
         self.colorbars = None
-        self.cmap = plt.cm.jet
+        self.cmap = cmap
         self.show_titles = True
 
         self.tikz_export = False
@@ -536,11 +539,10 @@ class Plotter:
         """
         x_size = shape[1]
         y_size = shape[0]
-        axe.set_xlim((-0.01*x_size, x_size+0.01*x_size))
-        axe.set_ylim((-0.01*y_size, y_size+0.01*y_size))
-        x0,x1 = axe.get_xlim()
-        y0,y1 = axe.get_ylim()
-        #axe.set_aspect(abs(x1-x0)/abs(y1-y0))
+        #axe.set_xlim((-0.01*x_size, x_size+0.01*x_size))
+        #axe.set_ylim((-0.01*y_size, y_size+0.01*y_size))
+        axe.set_ylim((0, y_size))
+        axe.set_xlim((0, x_size))
 
     def add_image_to_axe(self, to_plot, axe):
         """Add the image in to_plot as a background.
@@ -625,13 +627,13 @@ class Plotter:
         values, values_pos = self.matrix_to_scatter(to_plot["data"])
         mini = 0
         maxi = max(values)
-        bounds = np.arange(1, maxi+1)
-        norm = mpl.colors.BoundaryNorm(np.arange(mini-0.5+1, maxi+0.5+1, 1), self.cmap.N)
+        bounds = np.arange(0, maxi+1)
+        norm = mpl.colors.BoundaryNorm(np.arange(mini-0.5, maxi+0.5+1, 1), self.cmap.N)
         opacity = self.get_opacity(to_plot)
         for value, data in zip(values, values_pos):
             c_array = [value]*len(data[0])
-            x_data = [d*x_coef for d in data[0]]
-            y_data = [d*y_coef for d in data[1]]
+            x_data = [d*x_coef for d in data[1]]
+            y_data = [d*y_coef for d in data[0]]
             scat = axe.scatter(x_data, y_data, c=c_array, vmax=maxi, vmin=mini,
                                cmap=self.cmap, norm=norm, alpha=opacity)
         colorbar = plt.colorbar(scat, ax=axe, ticks=bounds)
