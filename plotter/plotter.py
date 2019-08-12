@@ -157,8 +157,6 @@ class Plotter:
     def init_fig_subplot(self):
         """Initialize the figure and axes for the plot plot.
 
-        TODO: Make private.
-
         """
         if self.nb_to_plot < 1:
             print("Error: nothing to plot")
@@ -186,8 +184,6 @@ class Plotter:
     def set_titles(self):
         """Set the title of the figures from the to_plot object.
 
-        TODO: Make private.
-
         """
         if self.show_titles:
             for i, axe in enumerate(self.axes):
@@ -203,7 +199,6 @@ class Plotter:
 
         coord - the axis of the label to get the font size.
 
-        TODO: Make private.
         """
         param = "{}_label_fontsize".format(coord)
         if param in to_plot:
@@ -219,7 +214,6 @@ class Plotter:
 
         to_plot - the dictionnary to parse for getting the label font size.
 
-        TODO: Make private.
         """
         return self.get_label_fontsize(to_plot, "x")
 
@@ -231,14 +225,11 @@ class Plotter:
 
         to_plot - the dictionnary to parse for getting the label font size.
 
-        TODO: Make private.
         """
         return self.get_label_fontsize(to_plot, "y")
 
     def set_labels(self):
         """Set the labels in the figures.
-
-        TODO: Make private.
 
         """
         for i, axe in enumerate(self.axes):
@@ -249,8 +240,6 @@ class Plotter:
 
     def set_ticklabels(self):
         """Set the labels for the thicks in the figures.
-
-        TODO: Make private.
 
         """
         for i, axe in enumerate(self.axes):
@@ -284,8 +273,6 @@ class Plotter:
     def set_grid(self):
         """Set the grid in the figures.
 
-        TODO: Make private.
-
         """
         for i, axe in enumerate(self.axes):
             if "show_grid" in self.to_plot[i]:
@@ -297,8 +284,6 @@ class Plotter:
         Arguments:
 
         matrix - the matrix to build a colorbar to.
-
-        TODO: Make private.
 
         """
         if matrix.min() != matrix.max():
@@ -322,8 +307,6 @@ class Plotter:
         """Remove the colorbars in the figures. Usefull for dynamic plot as colorbars
         are stacking while repeating the plot.
 
-        TODO: Make private.
-
         """
         if self.colorbars is not None:
             for colorbar in self.colorbars:
@@ -337,8 +320,6 @@ class Plotter:
 
         to_plot - the dictionnary to parse the bar width from.
 
-        TODO: Make private.
-
         """
         if "bar_width" in to_plot:
             if (to_plot["bar_width"] > 0) and (to_plot["bar_width"] <= 1):
@@ -348,15 +329,11 @@ class Plotter:
     def clean_plot(self):
         """Clean the figures before plotting. Usefull for dynamic plot.
 
-        TODO: Make private.
-
         """
         self.remove_colorbars()
 
-    def set_informations(self):
+    def set_axe_properties(self):
         """Set information on the plots.
-
-        TODO: Make private.
 
         """
         self.set_titles()
@@ -372,8 +349,6 @@ class Plotter:
         to_plot - the dictionnary containing the information for plotting the matrix.
 
         axe - the subfigure where to plot the matrix.
-
-        TODO: Make private.
 
         """
         bounds, norm = self.get_bounds_and_norm(to_plot["data"])
@@ -394,8 +369,6 @@ class Plotter:
         Arguments:
 
         to_plot - the dictionnary to parse for getting the data value parameters.
-
-        TODO: Make private.
 
         """
         if "data_value_color" in to_plot:
@@ -419,8 +392,6 @@ class Plotter:
 
         axe - the subfigure where to show the values of data.
 
-        TODO: Make private.
-
         """
         data_value_color, data_value_fontsize = self.get_data_value_caract(to_plot)
         for i, value in enumerate(to_plot["data"]):
@@ -443,8 +414,6 @@ class Plotter:
 
         axe - the subfigure where to plot the bars.
 
-        TODO: Make private.
-
         """
         width = self.get_bar_width(to_plot)
         axe.bar(np.arange(1, len(to_plot["data"]) + 1), to_plot["data"], width=width)
@@ -464,8 +433,6 @@ class Plotter:
         to_plot - the dictionnary containing the information for the plot.
 
         axe - the subfigure where to plot the bars.
-
-        TODO: Make private.
 
         """
         w = self.get_bar_width(to_plot)
@@ -487,8 +454,6 @@ class Plotter:
         to_plot - the dictionnary to parse for getting legend information.
 
         axe - the subfigure where to add the legend.
-
-        TODO: Make private.
 
         """
         if "legend" in to_plot:
@@ -561,8 +526,6 @@ class Plotter:
         """
         x_size = shape[1]
         y_size = shape[0]
-        #axe.set_xlim((-0.01*x_size, x_size+0.01*x_size))
-        #axe.set_ylim((-0.01*y_size, y_size+0.01*y_size))
         axe.set_ylim((0, y_size))
         axe.set_xlim((0, x_size))
 
@@ -694,11 +657,9 @@ class Plotter:
     def plot_data(self):
         """Plot the data from the to_plot parameter.
 
-        TODO: Make private.
-
         """
         self.clean_plot()
-        self.set_informations()
+        self.set_axe_properties()
         for i, axe in enumerate(self.axes):
             to_plot = self.to_plot[i]
             if to_plot["type"] == "matrix" or to_plot["type"] == PlotterType.MATRIX:
@@ -711,10 +672,7 @@ class Plotter:
                 axe.plot(to_plot["data"])
             elif to_plot["type"] == "plot" or to_plot["type"] == PlotterType.PLOT:
                 axe.plot(to_plot["data"][0], to_plot["data"][1])
-            elif (
-                to_plot["type"] == "multitrace"
-                or to_plot["type"] == PlotterType.MULTITRACE
-            ):
+            elif (to_plot["type"] == "multitrace" or to_plot["type"] == PlotterType.MULTITRACE):
                 for data in to_plot["data"]:
                     axe.plot(data)
             elif to_plot["type"] == "bar" or to_plot["type"] == PlotterType.BAR:
@@ -746,8 +704,6 @@ class Plotter:
     def clean_axes(self):
         """Clean axes. Usefull for dynamic plot.
 
-        TODO: Make private.
-
         """
         for axe in self.axes:
             axe.cla()
@@ -773,8 +729,6 @@ class Plotter:
 
     def init_plot(self):
         """Initialize the plot.
-
-        TODO: Make private.
 
         """
         self.init_fig_subplot()
