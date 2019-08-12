@@ -34,7 +34,7 @@ class Plotter:
 
     """
     def __init__(self, to_plot, figsuptitle=None, figsize=(20, 20),
-                 tikz_file="", cmap=plt.cm.jet):
+                 tikz_file="", cmap=plt.cm.jet, latex=False):
         """Constructor function of the Class Plotter.
 
         Initialize the Plotter class with figures to plot or the number of figures to plot.
@@ -54,6 +54,10 @@ class Plotter:
         Tikz description of the figure (default: "").
 
         """
+        if latex:
+            plt.rc("text", usetex=True)
+            plt.rc("font", family="serif")
+
         self.figsize = figsize
         self.figsuptitle = figsuptitle
         self.fig = None
@@ -250,17 +254,30 @@ class Plotter:
 
         """
         for i, axe in enumerate(self.axes):
-            fontdict = None
             if "x_ticklabels" in self.to_plot[i]:
-                ind = np.arange(1, len(self.to_plot[i]["x_ticklabels"]) + 1)
-                axe.set_xticks(ind)
-                axe.set_xticklabels(self.to_plot[i]["x_ticklabels"], fontdict)
-            elif "x_ticklabels_fontsize" in self.to_plot[i]:
+                if "x_ticklabels_position" in self.to_plot[i]:
+                    axe.set_xticks(self.to_plot[i]["x_ticklabels_position"])
+                else:
+                    ind = np.arange(1, len(self.to_plot[i]["x_ticklabels"]) + 1)
+                    axe.set_xticks(ind)
+                axe.set_xticklabels(self.to_plot[i]["x_ticklabels"])
+
+            if "y_ticklabels" in self.to_plot[i]:
+                if "y_ticklabels_position" in self.to_plot[i]:
+                    axe.set_yticks(self.to_plot[i]["y_ticklabels_position"])
+                else:
+                    ind = np.arange(1, len(self.to_plot[i]["y_ticklabels"]) + 1)
+                    axe.set_yticks(ind)
+                axe.set_yticklabels(self.to_plot[i]["y_ticklabels"])
+
+            if "x_ticklabels_fontsize" in self.to_plot[i]:
                 for xticklabel in axe.get_xticklabels():
                     xticklabel.set_fontsize(self.to_plot[i]["x_ticklabels_fontsize"])
+
             if "y_ticklabels_fontsize" in self.to_plot[i]:
                 for yticklabel in axe.get_yticklabels():
                     yticklabel.set_fontsize(self.to_plot[i]["y_ticklabels_fontsize"])
+
             if "ticklabels_fontsize" in self.to_plot[i]:
                 axe.tick_params(labelsize=self.to_plot[i]["ticklabels_fontsize"])
 
@@ -364,6 +381,11 @@ class Plotter:
         colorbar = plt.colorbar(mat, ax=axe, ticks=bounds)
         if "colorbar_fontsize" in to_plot:
             colorbar.ax.tick_params(labelsize=to_plot["colorbar_fontsize"])
+        if "colorbar_label" in to_plot:
+                fontsize = 20
+                if "colorbar_label_fontsize" in to_plot:
+                    fontsize = to_plot["colorbar_label_fontsize"]
+                colorbar.set_label(to_plot["colorbar_label"], fontsize=fontsize)
         self.colorbars.append(colorbar)
 
     def get_data_value_caract(self, to_plot):
@@ -605,12 +627,16 @@ class Plotter:
             img_shape = self.add_image_to_axe(to_plot, axe)
             if "scale_to_image" in to_plot:
                 if to_plot["scale_to_image"]:
-                    img_width = img_shape[0]
-                    img_height = img_shape[1]
-                    mat_width = to_plot["data"].shape[0]-1
-                    mat_height = to_plot["data"].shape[1]-1
+                    img_width = img_shape[1]
+                    img_height = img_shape[0]
+                    mat_width = to_plot["data"].shape[1]-1
+                    mat_height = to_plot["data"].shape[0]-1
                     x_coef = img_width/mat_width
                     y_coef = img_height/mat_height
+                if "x_scale" in to_plot:
+                    x_coef = x_coef*to_plot["x_scale"]
+                if "y_scale" in to_plot:
+                    y_coef = y_coef*to_plot["y_scale"]
         return x_coef, y_coef
 
     def plot_matrixscatter(self, to_plot, axe):
@@ -626,20 +652,27 @@ class Plotter:
         x_coef, y_coef = self.add_scatter_image(to_plot, axe)
         values, values_pos = self.matrix_to_scatter(to_plot["data"])
         mini = 0
-        maxi = max(values)
-        bounds = np.arange(0, maxi+1)
-        norm = mpl.colors.BoundaryNorm(np.arange(mini-0.5, maxi+0.5+1, 1), self.cmap.N)
-        opacity = self.get_opacity(to_plot)
-        for value, data in zip(values, values_pos):
-            c_array = [value]*len(data[0])
-            x_data = [d*x_coef for d in data[1]]
-            y_data = [d*y_coef for d in data[0]]
-            scat = axe.scatter(x_data, y_data, c=c_array, vmax=maxi, vmin=mini,
-                               cmap=self.cmap, norm=norm, alpha=opacity)
-        colorbar = plt.colorbar(scat, ax=axe, ticks=bounds)
-        if "colorbar_fontsize" in to_plot:
-            colorbar.ax.tick_params(labelsize=to_plot["colorbar_fontsize"])
-        self.colorbars.append(colorbar)
+        if len(values) > 0:
+            maxi = max(values)
+            bounds = np.arange(0, maxi+1)
+            norm = mpl.colors.BoundaryNorm(np.arange(mini-0.5, maxi+0.5+1, 1), self.cmap.N)
+            opacity = self.get_opacity(to_plot)
+            for value, data in zip(values, values_pos):
+                c_array = [value]*len(data[0])
+                x_data = [d*x_coef for d in data[1]]
+                y_data = [d*y_coef for d in data[0]]
+                scat = axe.scatter(x_data, y_data, c=c_array, vmax=maxi,
+                                   vmin=mini, cmap=self.cmap, norm=norm,
+                                   alpha=opacity)
+            colorbar = plt.colorbar(scat, ax=axe, ticks=bounds)
+            if "colorbar_fontsize" in to_plot:
+                colorbar.ax.tick_params(labelsize=to_plot["colorbar_fontsize"])
+            if "colorbar_label" in to_plot:
+                fontsize = 20
+                if "colorbar_label_fontsize" in to_plot:
+                    fontsize = to_plot["colorbar_label_fontsize"]
+                colorbar.set_label(to_plot["colorbar_label"], fontsize=fontsize)
+            self.colorbars.append(colorbar)
 
     def plot_scatter(self, to_plot, axe):
         """Plot the data from to_plot as a scatter.
