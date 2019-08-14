@@ -247,7 +247,7 @@ class Plotter:
                 if "x_ticklabels_position" in self.to_plot[i]:
                     axe.set_xticks(self.to_plot[i]["x_ticklabels_position"])
                 else:
-                    ind = np.arange(1, len(self.to_plot[i]["x_ticklabels"]) + 1)
+                    ind = np.arange(0, len(self.to_plot[i]["x_ticklabels"]))
                     axe.set_xticks(ind)
                 axe.set_xticklabels(self.to_plot[i]["x_ticklabels"])
 
@@ -255,7 +255,7 @@ class Plotter:
                 if "y_ticklabels_position" in self.to_plot[i]:
                     axe.set_yticks(self.to_plot[i]["y_ticklabels_position"])
                 else:
-                    ind = np.arange(1, len(self.to_plot[i]["y_ticklabels"]) + 1)
+                    ind = np.arange(0, len(self.to_plot[i]["y_ticklabels"]))
                     axe.set_yticks(ind)
                 axe.set_yticklabels(self.to_plot[i]["y_ticklabels"])
 
