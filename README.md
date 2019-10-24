@@ -14,8 +14,11 @@ https://github.com/T-TROUCHKINE/plotter
 
 ### Python modules
 - matplotlib : `pip install matplotlib`
-- matplotlib2tikz : `pip install matplotlib2tikz`
-- numpy : `pip install numpy`
+- tikzplotlib : `pip install tikzplotlib`
+- numpy : `pip install numpy**
+
+**GTK3**
+For using GTK3 modules see PyGObject documentation (https://pygobject.readthedocs.io/en/latest/index.html)
 
 ## Installation
 ### From PIP

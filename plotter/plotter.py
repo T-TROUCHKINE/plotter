@@ -2,16 +2,13 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import numpy as np
-from matplotlib2tikz import save as tikz_save
+from tikzplotlib import save as tikz_save
 from enum import Enum
 
 types_str = ["matrix", "scatter", "histogram", "trace", "plot", "multitrace", "bar", "multibar", "pie", "multiscatter", "matrixscatter"]
 
 class PlotterType(Enum):
-    """Class containing all possible ways to plot data using plotter.
-
-    Use these values for the "type" paramater in the description of your
-    figure.
+    """Class containing all possible ways to plot data using plotter. Use these values for the "type" paramater in the description of your figure.
 
     """
     MATRIX = 1
@@ -27,31 +24,19 @@ class PlotterType(Enum):
     MATRIXSCATTER = 11
 
 class Plotter:
-    """Class used for plotting data.
-
-    This class must take as argument a dictionary containing the description
-    and the data of the figures you want to plot.
+    """Class used for plotting data. This class must take as argument a dictionary containing the description and the data of the figures you want to plot.
 
     """
     def __init__(self, to_plot, figsuptitle=None, figsize=(20, 20),
                  tikz_file="", cmap=plt.cm.jet, latex=False):
-        """Constructor function of the Class Plotter.
+        """Constructor function of the Class Plotter. Initialize the Plotter class with figures to plot or the number of figures to plot.
 
-        Initialize the Plotter class with figures to plot or the number of figures to plot.
-
-        Arguments:
-
-        to_plot - a dictionnary containing the figures to plot or an integer
-        containing the number of figures to plot.
-
-        figsuptitle - a string containing the title of the whole plot (default:
-        None).
-
-        figsize - a tuple containing the size of the window containing the
-        figures (default: (20,20)).
-
-        tikz_file - a string containing the path to the file where save the
-        Tikz description of the figure (default: "").
+        :param list/int to_plot: a list of dictionaries containing the figures to plot or an integer containing the number of figures to plot.
+        :param str figsuptitle: the title of the whole plot (default: None).
+        :param tuple figsize: the size of the window containing the figures (default: (20,20)).
+        :param str tikz_file: the path to the file where save the Tikz description of the figure (default: "").
+        :param ColorMap cmap: the ColorMap to use for the plot.
+        :param bool latex: a flag for choosing to have the Latex font used on the plot or not.
 
         """
         if latex:
@@ -59,22 +44,37 @@ class Plotter:
             plt.rc("font", family="serif")
 
         self.figsize = figsize
+        """The size of the window containing the figures."""
         self.figsuptitle = figsuptitle
+        """The title of the whole plot."""
         self.fig = None
+        """The Figure object which contains the plots"""
+
+        self.nb_to_plot = 0
+        """The number of subfigures in the plot."""
+        self.to_plot = None
+        """The list of dictionaries describing the figures to plot."""
 
         if isinstance(to_plot, int):
             self.nb_to_plot = to_plot
-            self.to_plot = None
-        elif to_plot is not None:
+        elif isinstance(to_plot, dict):
             self.to_plot = to_plot
             self.nb_to_plot = len(self.to_plot)
 
         self.axes = None
+        """The Axes objects of each subfigures."""
         self.colorbars = None
+        """The Coloarbar objects of the subfigures."""
         self.cmap = cmap
+        """The ColorMap used for the plot."""
         self.show_titles = True
+        """A flag that set if the titles of the subfigures have to be visible or not."""
 
         self.tikz_export = False
+        """A flag that set if the plot must be exported in a Tikz file."""
+        self.tikz_file = None
+        """"The string containing the path to the file of the Tikz file."""
+
         if len(tikz_file) > 0:
             self.tikz_file = tikz_file
             self.tikz_export = True
@@ -82,36 +82,37 @@ class Plotter:
         self.init_plot()
 
     def set_show_titles(self, val):
-        """Set the show_titles parameter. If set to True the figures will all have a
-        title above their plot.
+        """Set the show_titles parameter. If set to True the figures will all have a title above their plot.
 
-        Arguments:
+        :param bool val: the value to set the show_titles flag to.
 
-        val - the boolean value to set show_titles to.
-
-        TODO: use the setter/getter function of Python
+        :TODO: remove the method and use the direct reference.
 
         """
         self.show_titles = val
 
     def get_fig(self):
-        """Return the Matplotlib figure object of the plot.
+        """:returns: the Matplotlib figure object of the plot.
+
+        :TODO: remove the method and use the direct reference.
 
         """
         return self.fig
 
     def set_colormap(self, cmap):
-        """Set the colormap. Mainly used in matrix figures.
+        """Change the colormap used for the plot.
 
-        Arguments:
+        :param Colormap cmap: the Colormap object from Matplotlib to use as a colormap.
 
-        cmap - the cmap object from Matplotlib to use as a colormap.
+        :TODO: remove the method and use the direct reference.
 
         """
         self.cmap = cmap
 
     def get_figsize(self):
-        """Return the size of the window plotting the figures.
+        """:returns: the size of the window plotting the figures.
+
+        :TODO: remove the method and use the direct reference.
 
         """
         return self.figsize
@@ -119,15 +120,17 @@ class Plotter:
     def set_figsize(self, figsize):
         """Set the size of the window plotting the figure.
 
-        Arguments:
+        :param tuple figsize: the size of window to use.
 
-        figsize - a tuple describing the size of window to use.
+        :TODO: remove the method and use the direct reference.
 
         """
         self.figsize = figsize
 
     def get_figsuptitle(self):
-        """Return the main title of the plot.
+        """:returns: the main title of the plot.
+
+        :TODO: remove the method and use the direct reference.
 
         """
         return self.figsuptitle
@@ -135,9 +138,9 @@ class Plotter:
     def set_figsuptitle(self, suptitle):
         """Set the main title of the plot.
 
-        Arguments:
+        :param str suptitle: the main title to use for the plot.
 
-        suptitle - the string containing the main title to use for the plot.
+        :TODO: remove the method and use the direct reference.
 
         """
         self.figsuptitle = suptitle
@@ -145,10 +148,9 @@ class Plotter:
     def set_to_plot(self, to_plot):
         """Set the figures plot.
 
-        Arguments:
+        :param dict to_plot: description of the figures to plot.
 
-        to_plot - a dictionnary containing the description of the figures to
-        plot.
+        :TODO: remove the method and use a setter Python function.
 
         """
         self.to_plot = to_plot
@@ -182,7 +184,7 @@ class Plotter:
                     i = 0
 
     def set_titles(self):
-        """Set the title of the figures from the to_plot object.
+        """Set the title of the figures from the to_plot dictionary.
 
         """
         if self.show_titles:
@@ -191,13 +193,13 @@ class Plotter:
                     axe.set_title(self.to_plot[i]["title"])
 
     def get_label_fontsize(self, to_plot, coord):
-        """Return the label font size parsed from the to_plot dictionnary.
+        """Extract the label font size of the coordinate from the to_plot dictionary. If there is not, returns 12.
 
-        Arguments:
 
-        to_plot - the dictionnary to parse for getting the label font size.
+        :param dict to_plot: the description of the plot.
+        :param str coord: the axis of the label to get the font size.
 
-        coord - the axis of the label to get the font size.
+        :returns: an integer which is the label font size parsed from the to_plot dictionnary.
 
         """
         param = "{}_label_fontsize".format(coord)
@@ -207,29 +209,23 @@ class Plotter:
             return 12
 
     def get_xlabel_fontsize(self, to_plot):
-        """Return the label font size of the label on x axis parsed from the to_plot
-        dictionnary.
+        """Extract the label font size of the label on x axis parsed from the to_plot dictionnary.
 
-        Arguments:
-
-        to_plot - the dictionnary to parse for getting the label font size.
+        :param dict to_plot: the description of the plot.
 
         """
         return self.get_label_fontsize(to_plot, "x")
 
     def get_ylabel_fontsize(self, to_plot):
-        """Return the label font size of the label on y axis parsed from the to_plot
-        dictionnary.
+        """Extract the label font size of the label on y axis parsed from the to_plot dictionnary.
 
-        Arguments:
-
-        to_plot - the dictionnary to parse for getting the label font size.
+        :param dict to_plot: the description of the plot.
 
         """
         return self.get_label_fontsize(to_plot, "y")
 
     def set_labels(self):
-        """Set the labels in the figures.
+        """Set the labels in the figures from the description of the plot.
 
         """
         for i, axe in enumerate(self.axes):
@@ -239,7 +235,7 @@ class Plotter:
                 axe.set_ylabel(self.to_plot[i]["y_label"], fontsize=self.get_ylabel_fontsize(self.to_plot[i]))
 
     def set_ticklabels(self):
-        """Set the labels for the thicks in the figures.
+        """Set the labels for the ticks and their font size in the figures.
 
         """
         for i, axe in enumerate(self.axes):
@@ -281,9 +277,7 @@ class Plotter:
     def get_bounds_and_norm(self, matrix):
         """Return the needed parameters for a clean colorbar for a Matrix plot.
 
-        Arguments:
-
-        matrix - the matrix to build a colorbar to.
+        :param array matrix: the matrix to build a colorbar for.
 
         """
         if matrix.min() != matrix.max():
@@ -304,8 +298,7 @@ class Plotter:
         return bounds, norm
 
     def remove_colorbars(self):
-        """Remove the colorbars in the figures. Usefull for dynamic plot as colorbars
-        are stacking while repeating the plot.
+        """Remove the colorbars in the figures. Usefull for dynamic plot as colorbars are stacking while updating the plot.
 
         """
         if self.colorbars is not None:
@@ -314,11 +307,9 @@ class Plotter:
         self.colorbars = []
 
     def get_bar_width(self, to_plot):
-        """Return the bar width parameter parsed from the to_plot dictionnary.
+        """Extract the bar width from the figure description.
 
-        Arguments:
-
-        to_plot - the dictionnary to parse the bar width from.
+        :param dict to_plot: the description of the figure.
 
         """
         if "bar_width" in to_plot:
@@ -333,7 +324,7 @@ class Plotter:
         self.remove_colorbars()
 
     def set_axe_properties(self):
-        """Set information on the plots.
+        """Set information on the figures.
 
         """
         self.set_titles()
@@ -342,13 +333,10 @@ class Plotter:
         self.set_grid()
 
     def plot_matrix(self, to_plot, axe):
-        """Plot a matrix.
+        """Compute the corresponding colorbar and plot a matrix.
 
-        Arguments:
-
-        to_plot - the dictionnary containing the information for plotting the matrix.
-
-        axe - the subfigure where to plot the matrix.
+        :param dict to_plot: the description of the figure.
+        :param Axe axe: the subfigure where to plot the matrix.
 
         """
         bounds, norm = self.get_bounds_and_norm(to_plot["data"])
@@ -364,11 +352,9 @@ class Plotter:
         self.colorbars.append(colorbar)
 
     def get_data_value_caract(self, to_plot):
-        """Return the parameters for the data value to show in bar plot.
+        """:param dict to_plot: the description of the figure.
 
-        Arguments:
-
-        to_plot - the dictionnary to parse for getting the data value parameters.
+        :returns: the parameters for the data value to show in bar plot.
 
         """
         if "data_value_color" in to_plot:
@@ -386,11 +372,8 @@ class Plotter:
     def show_text_value(self, to_plot, axe):
         """Add the values of bars as text.
 
-        Arguments:
-
-        to_plot - the dictionnary containing the information about how to display the values.
-
-        axe - the subfigure where to show the values of data.
+        :param dict to_plot: the description of the figure.
+        :param Axe axe: the subfigure where to show the values of data.
 
         """
         data_value_color, data_value_fontsize = self.get_data_value_caract(to_plot)
@@ -406,13 +389,10 @@ class Plotter:
             )
 
     def plot_bar(self, to_plot, axe):
-        """Plot bars from one data set.
+        """Compute the information and plot a bar figure.
 
-        Arguments:
-
-        to_plot - the dictionnary containing the information for the plot.
-
-        axe - the subfigure where to plot the bars.
+        :param dict to_plot: the description of the figure.
+        :param Axe axe: the subfigure where to plot the bars.
 
         """
         width = self.get_bar_width(to_plot)
@@ -426,13 +406,10 @@ class Plotter:
                 plt.setp(axe.get_xticklabels(), rotation=30, ha='right')
 
     def plot_multibar(self, to_plot, axe):
-        """Plot bars from multiple data set.
+        """Compute the information and plot a multibar figure.
 
-        Arguments:
-
-        to_plot - the dictionnary containing the information for the plot.
-
-        axe - the subfigure where to plot the bars.
+        :param dict to_plot: the description of the figure.
+        :param Axe axe: the subfigure where to plot the bars.
 
         """
         w = self.get_bar_width(to_plot)
@@ -447,26 +424,20 @@ class Plotter:
             axe.set_xticks(ind)
 
     def add_legend(self, to_plot, axe):
-        """Add a legend to the plot.
+        """Add a legend to the figure.
 
-        Arguments:
-
-        to_plot - the dictionnary to parse for getting legend information.
-
-        axe - the subfigure where to add the legend.
+        :param dict to_plot: the description of the figure.
+        :param Axe axe: the subfigure where to add the legend.
 
         """
         if "legend" in to_plot:
             axe.legend(to_plot["legend"])
 
     def plot_pie(self, to_plot, axe):
-        """Plot the data from to_plot as a pie.
+        """Compute the information and plot a pie figure.
 
-        Arguments:
-
-        to_plot - the dictionnary to parse data from.
-
-        axe - the subfigure to work on.
+        :param dict to_plot: the description of the figure.
+        :param Axe axe: the subfigure where to plot the pie.
 
         """
         labels = None
@@ -475,13 +446,10 @@ class Plotter:
         axe.pie(to_plot["data"], autopct='%3.2f%%', labels=labels)
 
     def plot_multiscatter(self, to_plot, axe):
-        """Plot the data from to_plot in a scatter way.
+        """Compute the information and plot a multiple scatter figure.
 
-        Arguments:
-
-        to_plot - the dictionnary to parse the data from.
-
-        axe - the subfigure to work on.
+        :param dict to_plot: the description of the figure.
+        :param Axe axe: the subfigure where to plot the pie.
 
         """
         x_coef, y_coef = self.add_scatter_image(to_plot, axe)
@@ -492,11 +460,9 @@ class Plotter:
             axe.scatter(x_data, y_data, alpha=opacity)
 
     def matrix_to_scatter(self, matrix):
-        """Convert the given matrix to data for scatter. Every value in the matrix will correspond to a set of data.
+        """Convert the given matrix to data for scatter. Every value in the matrix will correspond to a set of data and can be plot in a multiscatter figure.
 
-        Arguments:
-
-        matrix - the matrix to convert into a scatter.
+        :param array matrix: the matrix to convert into a scatter.
 
         """
         dim = matrix.shape
@@ -517,11 +483,8 @@ class Plotter:
     def redim_axe(self, shape, axe):
         """Redimension the figure with the given shape.
 
-        Arguments:
-
-        shape - the tuple containing the target width and height of the figure.
-
-        axe - the subfigure to work on.
+        :param tuple shape: the target width and height of the figure.
+        :param Axe axe: the subfigure to work on.
 
         """
         x_size = shape[1]
@@ -530,7 +493,7 @@ class Plotter:
         axe.set_xlim((0, x_size))
 
     def add_image_to_axe(self, to_plot, axe):
-        """Add the image in to_plot as a background.
+        """Add the image from the figure description as a background.
 
         Arguments:
 

@@ -2,3 +2,8 @@ build
 dist
 plotter.egg-info
 __pycache__
+examples/tikz/auto
+examples/tikz/*.aux
+examples/tikz/*.log
+examples/tikz/*.pdf
+examples/tikz/tikz_figure.tex
