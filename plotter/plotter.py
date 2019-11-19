@@ -57,7 +57,7 @@ class Plotter:
 
         if isinstance(to_plot, int):
             self.nb_to_plot = to_plot
-        elif isinstance(to_plot, dict):
+        elif isinstance(to_plot, list):
             self.to_plot = to_plot
             self.nb_to_plot = len(self.to_plot)
 
@@ -317,6 +317,17 @@ class Plotter:
                 return to_plot["bar_width"]
         return 0.8
 
+    def get_multibar_width(self, to_plot):
+        """Extract the bar width from the figure description.
+
+        :param dict to_plot: the description of the figure.
+
+        """
+        if "bar_width" in to_plot:
+            if (to_plot["bar_width"] > 0) and (to_plot["bar_width"] <= 1):
+                return to_plot["bar_width"]
+        return 0.6/len(to_plot["data"])
+
     def clean_plot(self):
         """Clean the figures before plotting. Usefull for dynamic plot.
 
@@ -412,9 +423,9 @@ class Plotter:
         :param Axe axe: the subfigure where to plot the bars.
 
         """
-        w = self.get_bar_width(to_plot)
+        n = len(to_plot["data"])
+        w = self.get_multibar_width(to_plot)
         for i, data in enumerate(to_plot["data"]):
-            n = len(to_plot["data"])
             x_pos = [x + 1 + 2*w*n - (n*w/2) + ( (2*i+1)*(w/2) ) for x in range(len(data)) ]
             if "colors" in to_plot:
                 axe.bar(x_pos, data, width=w, align="center", color=to_plot["colors"][i])
