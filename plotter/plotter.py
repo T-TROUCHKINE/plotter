@@ -5,6 +5,8 @@ import numpy as np
 from matplotlib2tikz import save as tikz_save
 from enum import Enum
 
+from .utils import wrap_str
+
 types_str = ["matrix", "scatter", "histogram", "trace", "plot", "multitrace", "bar", "multibar", "pie", "multiscatter", "matrixscatter"]
 
 class PlotterType(Enum):
@@ -260,7 +262,8 @@ class Plotter:
                 else:
                     ind = np.arange(1, len(self.to_plot[i]["x_ticklabels"]) + 1)
                     axe.set_xticks(ind)
-                axe.set_xticklabels(self.to_plot[i]["x_ticklabels"])
+                axe.set_xticklabels(wrap_str(str(label), 10) for label in
+                                    self.to_plot[i]["x_ticklabels"])
 
             if "y_ticklabels" in self.to_plot[i]:
                 if "y_ticklabels_position" in self.to_plot[i]:
@@ -434,6 +437,11 @@ class Plotter:
                 fontsize=data_value_fontsize,
             )
 
+    def rotate_x_labels(self, to_plot, axe):
+        if "rotate_x_labels" in to_plot:
+            if to_plot["rotate_x_labels"]:
+                plt.setp(axe.get_xticklabels(), rotation=30, ha='right')
+
     def plot_bar(self, to_plot, axe):
         """Plot bars from one data set.
 
@@ -452,9 +460,7 @@ class Plotter:
         if "show_data_value" in to_plot:
             if to_plot["show_data_value"]:
                 self.show_text_value(to_plot, axe)
-        if "rotate_x_labels" in to_plot:
-            if to_plot["rotate_x_labels"]:
-                plt.setp(axe.get_xticklabels(), rotation=30, ha='right')
+        self.rotate_x_labels(to_plot, axe)
 
     def plot_multibar(self, to_plot, axe):
         """Plot bars from multiple data set.
@@ -478,6 +484,13 @@ class Plotter:
                 axe.bar(x_pos, data, width=w, align="center")
             ind = [x + 1 + 2*w*n for x in range(len(to_plot["x_ticklabels"]))]
             axe.set_xticks(ind)
+        self.rotate_x_labels(to_plot, axe)
+
+    def get_legend_fontsize(self, to_plot):
+        if "legend_fontsize" in to_plot:
+            return to_plot["legend_fontsize"]
+        else:
+            return 12
 
     def add_legend(self, to_plot, axe):
         """Add a legend to the plot.
@@ -492,7 +505,14 @@ class Plotter:
 
         """
         if "legend" in to_plot:
-            axe.legend(to_plot["legend"])
+            fontsize = self.get_legend_fontsize(to_plot)
+            axe.legend(to_plot["legend"], prop={"size": fontsize})
+
+    def get_labels_fontsize(self, to_plot):
+        if "labels_fontsize" in to_plot:
+            return to_plot["labels_fontsize"]
+        else:
+            return 12
 
     def plot_pie(self, to_plot, axe):
         """Plot the data from to_plot as a pie.
@@ -507,7 +527,9 @@ class Plotter:
         labels = None
         if "labels" in to_plot:
             labels = to_plot["labels"]
-        axe.pie(to_plot["data"], autopct='%3.2f%%', labels=labels)
+        labels_fontsize = self.get_labels_fontsize(to_plot)
+        axe.pie(to_plot["data"], autopct='%3.2f%%', labels=labels,
+                textprops={"fontsize": labels_fontsize})
 
     def plot_multiscatter(self, to_plot, axe):
         """Plot the data from to_plot in a scatter way.
@@ -594,7 +616,7 @@ class Plotter:
         """
         if "revert_axis" in to_plot:
             if to_plot["revert_axis"]:
-                axe.set_xlin(axe.get_xlim()[::-1])
+                axe.set_xlim(axe.get_xlim()[::-1])
                 axe.set_ylim(axe.get_ylim()[::-1])
         else:
             if "revert_y_axis" in to_plot:
@@ -602,7 +624,7 @@ class Plotter:
                     axe.set_ylim(axe.get_ylim()[::-1])
             if "revert_x_axis" in to_plot:
                 if to_plot["revert_x_axis"]:
-                    axe.set_xlin(axe.get_xlim()[::-1])
+                    axe.set_xlim(axe.get_xlim()[::-1])
 
     def get_opacity(self, to_plot):
         if "opacity" in to_plot:
@@ -729,6 +751,21 @@ class Plotter:
                 self.plot_matrixscatter(to_plot, axe)
             self.add_legend(to_plot, axe)
             self.revert_axes(to_plot, axe)
+            self.add_text(to_plot, axe)
+
+    def add_text(self, to_plot, axe):
+        if "text" in to_plot:
+            for text in to_plot["text"]:
+                x_pos = text[0]
+                y_pos = text[1]
+                content = text[2]
+                axe.text(
+                    x_pos,
+                    y_pos,
+                    content,
+                    horizontalalignment="center",
+                    verticalalignment="center"
+                )
 
     def export_tikz(self, filename="tikz_fig.tex"):
         """Export the figure to a tikz file. This method cannot be called after the
