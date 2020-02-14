@@ -245,7 +245,7 @@ class Plotter:
                 if "x_ticklabels_position" in self.to_plot[i]:
                     axe.set_xticks(self.to_plot[i]["x_ticklabels_position"])
                 else:
-                    ind = np.arange(0, len(self.to_plot[i]["x_ticklabels"]))
+                    ind = np.arange(1, len(self.to_plot[i]["x_ticklabels"]) + 1)
                     axe.set_xticks(ind)
                 axe.set_xticklabels(wrap_str(str(label), 10) for label in
                                     self.to_plot[i]["x_ticklabels"])
@@ -478,6 +478,39 @@ class Plotter:
         axe.pie(to_plot["data"], autopct='%3.2f%%', labels=labels,
                 textprops={"fontsize": labels_fontsize})
 
+    def get_marker(self, to_plot, i=0):
+        if "marker" in to_plot:
+            if type(to_plot["marker"]) is str:
+                return to_plot["marker"]
+            elif type(to_plot["marker"]) is list:
+                return to_plot["marker"][i]
+            else:
+                print("Error: type for attribute \"marker\" unknown.")
+        else:
+            return "."
+
+    def get_marker_size(self, to_plot, i=0):
+        if "marker_size" in to_plot:
+            if type(to_plot["marker_size"]) is int:
+                return to_plot["marker_size"]
+            elif type(to_plot["marker_size"]) is list:
+                return to_plot["marker_size"][i]
+            else:
+                print("Error: type for attribute \"marker_size\" unknown.")
+        else:
+            return 80
+
+    def get_marker_color(self, to_plot, i=0):
+        if "marker_color" in to_plot:
+            if type(to_plot["marker_color"]) is str:
+                return to_plot["marker_color"]
+            elif type(to_plot["marker_color"]) is list:
+                return to_plot["marker_color"][i]
+            else:
+                print("Error: type for attribute \"marker_color\" unknown.")
+        else:
+            print("Error: get_marker_color() called without checking if the \"marker_color\" attribute is present.")
+
     def plot_multiscatter(self, to_plot, axe):
         """Compute the information and plot a multiple scatter figure.
 
@@ -487,10 +520,16 @@ class Plotter:
         """
         x_coef, y_coef = self.add_scatter_image(to_plot, axe)
         opacity = self.get_opacity(to_plot)
-        for data in to_plot["data"]:
+        for i, data in enumerate(to_plot["data"]):
             x_data = [d*x_coef for d in data[0]]
             y_data = [d*y_coef for d in data[1]]
-            axe.scatter(x_data, y_data, alpha=opacity)
+            marker = self.get_marker(to_plot, i)
+            size = self.get_marker_size(to_plot, i)
+            if "marker_color" in to_plot:
+                color = self.get_marker_color(to_plot, i)
+                axe.scatter(x_data, y_data, alpha=opacity, marker=marker, s=size, c=color)
+            else:
+                axe.scatter(x_data, y_data, alpha=opacity, marker=marker, s=size)
 
     def matrix_to_scatter(self, matrix):
         """Convert the given matrix to data for scatter. Every value in the matrix will correspond to a set of data and can be plot in a multiscatter figure.
