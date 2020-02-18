@@ -30,7 +30,7 @@ class Plotter:
 
     """
     def __init__(self, to_plot, figsuptitle=None, figsize=(20, 20),
-                 tikz_file="", cmap=plt.cm.jet, latex=False):
+                 tikz_file="", cmap=plt.cm.jet, latex=False, force_stack_dir=None):
         """Constructor function of the Class Plotter. Initialize the Plotter class with figures to plot or the number of figures to plot.
 
         :param list/int to_plot: a list of dictionaries containing the figures to plot or an integer containing the number of figures to plot.
@@ -39,6 +39,7 @@ class Plotter:
         :param str tikz_file: the path to the file where save the Tikz description of the figure (default: "").
         :param ColorMap cmap: the ColorMap to use for the plot.
         :param bool latex: a flag for choosing to have the Latex font used on the plot or not.
+        :param bool force_stack_dir: a flag for forcing the subplots to stack in the vertical ("v") direction or in the horizontalal ("h") direction.
 
         """
         if latex:
@@ -80,6 +81,8 @@ class Plotter:
         if len(tikz_file) > 0:
             self.tikz_file = tikz_file
             self.tikz_export = True
+
+        self.force_stack_dir = force_stack_dir
 
         self.init_plot()
 
@@ -165,21 +168,34 @@ class Plotter:
         if self.nb_to_plot < 1:
             print("Error: nothing to plot")
             exit(1)
-        nb_cols = int(np.ceil(np.sqrt(self.nb_to_plot)))
-        nb_rows = int(np.ceil(self.nb_to_plot / nb_cols))
-        self.fig, axe = plt.subplots(nb_rows, nb_cols, figsize=self.figsize)
+
+        if self.force_stack_dir == "v":
+            nb_rows = self.nb_to_plot
+            nb_cols = 1
+            self.fig, axe = plt.subplots(nb_rows, figsize=self.figsize)
+        elif self.force_stack_dir == "h":
+            nb_cols = self.nb_to_plot
+            nb_rows = 1
+            self.fig, axe = plt.subplots(nb_rows, nb_cols, figsize=self.figsize)
+        else:
+            nb_cols = int(np.ceil(np.sqrt(self.nb_to_plot)))
+            nb_rows = int(np.ceil(self.nb_to_plot / nb_cols))
+            self.fig, axe = plt.subplots(nb_rows, nb_cols, figsize=self.figsize)
         self.fig.suptitle(self.figsuptitle)
         self.axes = []
         if self.nb_to_plot == 1:
             self.axes.append(axe)
-        elif self.nb_to_plot == 2:
+        elif self.nb_to_plot == 2: # Maybe useless (not tested when removed)
             self.axes.append(axe[0])
             self.axes.append(axe[1])
         else:
             i = 0
             j = 0
             for k in range(self.nb_to_plot):
-                self.axes.append(axe[i, j])
+                if (nb_cols == 1) or (nb_rows == 1):
+                    self.axes.append(axe[i])
+                else:
+                    self.axes.append(axe[i, j])
                 i += 1
                 if i == nb_rows:
                     j += 1
