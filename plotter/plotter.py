@@ -447,6 +447,12 @@ class Plotter:
         else:
             return 12
 
+    def get_legend_location(self, to_plot):
+        if "legend_location" in to_plot:
+            return to_plot["legend_location"]
+        else:
+            return "best"
+
     def add_legend(self, to_plot, axe):
         """Add a legend to the figure.
 
@@ -456,7 +462,8 @@ class Plotter:
         """
         if "legend" in to_plot:
             fontsize = self.get_legend_fontsize(to_plot)
-            axe.legend(to_plot["legend"], prop={"size": fontsize})
+            loc = self.get_legend_location(to_plot)
+            axe.legend(to_plot["legend"], prop={"size": fontsize}, loc=loc)
 
     def get_labels_fontsize(self, to_plot):
         if "labels_fontsize" in to_plot:
