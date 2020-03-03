@@ -201,6 +201,12 @@ class Plotter:
                     j += 1
                     i = 0
 
+    def get_title_fontsize(self, to_plot):
+        if "title_fontsize" in to_plot:
+            return to_plot["title_fontsize"]
+        else:
+            return 16
+
     def set_titles(self):
         """Set the title of the figures from the to_plot dictionary.
 
@@ -208,7 +214,8 @@ class Plotter:
         if self.show_titles:
             for i, axe in enumerate(self.axes):
                 if "title" in self.to_plot[i]:
-                    axe.set_title(self.to_plot[i]["title"])
+                    font_size = self.get_title_fontsize(self.to_plot[i])
+                    axe.set_title(self.to_plot[i]["title"], fontsize=font_size)
 
     def get_label_fontsize(self, to_plot, coord):
         """Extract the label font size of the coordinate from the to_plot dictionary. If there is not, returns 12.
@@ -371,6 +378,9 @@ class Plotter:
         """
         bounds, norm = self.get_bounds_and_norm(to_plot["data"])
         mat = axe.matshow(to_plot["data"], cmap=self.cmap, norm=norm)
+        if "no_colorbar" in to_plot:
+            if to_plot["no_colorbar"]:
+                return
         colorbar = plt.colorbar(mat, ax=axe, ticks=bounds)
         if "colorbar_fontsize" in to_plot:
             colorbar.ax.tick_params(labelsize=to_plot["colorbar_fontsize"])
@@ -675,7 +685,7 @@ class Plotter:
         mini = 0
         if len(values) > 0:
             maxi = max(values)
-            bounds = np.arange(0, maxi+1)
+            bounds = np.arange(mini, maxi+1)
             norm = mpl.colors.BoundaryNorm(np.arange(mini-0.5, maxi+0.5+1, 1), self.cmap.N)
             opacity = self.get_opacity(to_plot)
             for value, data in zip(values, values_pos):
