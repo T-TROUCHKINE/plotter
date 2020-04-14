@@ -24,6 +24,7 @@ class PlotterType(Enum):
     PIE = 9
     MULTISCATTER = 10
     MATRIXSCATTER = 11
+    STACKEDBAR = 12
 
 class Plotter:
     """Class used for plotting data. This class must take as argument a dictionary containing the description and the data of the figures you want to plot.
@@ -299,6 +300,11 @@ class Plotter:
         for i, axe in enumerate(self.axes):
             if "show_grid" in self.to_plot[i]:
                 axe.grid(b=self.to_plot[i]["show_grid"])
+            else:
+                if "show_xgrid" in self.to_plot[i]:
+                    axe.xaxis.grid(self.to_plot[i]["show_xgrid"])
+                if "show_ygrid" in self.to_plot[i]:
+                    axe.yaxis.grid(self.to_plot[i]["show_ygrid"])
 
     def get_bounds_and_norm(self, matrix):
         """Return the needed parameters for a clean colorbar for a Matrix plot.
@@ -465,6 +471,21 @@ class Plotter:
                 axe.bar(x_pos, data, width=w, align="center")
             ind = [x + 1 + 2*w*n for x in range(len(to_plot["x_ticklabels"]))]
             axe.set_xticks(ind)
+        self.rotate_x_labels(to_plot, axe)
+
+    def plot_stackedbar(self, to_plot, axe):
+        """Compute the information and plot a stacked bar figure.
+
+        :param dict to_plot: the description of the figure.
+        :param Axe axe: the subfigure where to plot the bars.
+
+        """
+        data_pos = [i for i,d in enumerate(to_plot["data"][0])]
+        w = self.get_bar_width(to_plot)
+        previous_data = None
+        for data in to_plot["data"]:
+            axe.bar(data_pos, data, w, bottom=previous_data)
+            previous_data = data
         self.rotate_x_labels(to_plot, axe)
 
     def get_legend_fontsize(self, to_plot):
@@ -753,6 +774,8 @@ class Plotter:
                 self.plot_multiscatter(to_plot, axe)
             elif to_plot["type"] == "matrixscatter" or to_plot["type"] == PlotterType.MATRIXSCATTER:
                 self.plot_matrixscatter(to_plot, axe)
+            elif to_plot["type"] == "stackedbar" or to_plot["type"] == PlotterType.STACKEDBAR:
+                self.plot_stackedbar(to_plot, axe)
             self.add_legend(to_plot, axe)
             self.revert_axes(to_plot, axe)
             self.add_text(to_plot, axe)

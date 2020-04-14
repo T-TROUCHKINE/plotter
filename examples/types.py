@@ -50,6 +50,11 @@ to_plot = [
         "bar_width": 0.3,
     },
     {
+        "title": "Stacked Bars",
+        "type": "stackedbar",
+        "data": [np.random.random(5), np.random.random(5)]
+    },
+    {
         "title": "Pie",
         "type": "pie",
         "data": np.random.randint(100, size=5)
@@ -63,7 +68,7 @@ to_plot = [
         "title": "Matrix Scatter",
         "type": "matrixscatter",
         "data": np.random.randint(0, 10, (40, 40))
-    }
+    },
 ]
 
 pl = Plotter(to_plot)

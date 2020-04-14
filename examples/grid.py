@@ -17,6 +17,18 @@ to_plot = [
         "data": [x, np.sin(x)],
         "show_grid": True
     },
+    {
+        "title": "With X grid",
+        "type": PlotterType.PLOT,
+        "data": [x, np.sin(x)],
+        "show_xgrid": True
+    },
+    {
+        "title": "With Y grid",
+        "type": PlotterType.PLOT,
+        "data": [x, np.sin(x)],
+        "show_ygrid": True
+    },
 ]
 
 pl = Plotter(to_plot)
