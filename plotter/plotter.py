@@ -427,7 +427,7 @@ class Plotter:
             axe.text(
                 i + 1,
                 value / 2,
-                "{:.2}".format(value),
+                "{:.2}".format(float(value)),
                 horizontalalignment="center",
                 verticalalignment="center",
                 color=data_value_color,
