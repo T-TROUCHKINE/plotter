@@ -760,7 +760,10 @@ class Plotter:
             elif to_plot["type"] == "trace" or to_plot["type"] == PlotterType.TRACE:
                 axe.plot(to_plot["data"])
             elif to_plot["type"] == "plot" or to_plot["type"] == PlotterType.PLOT:
-                axe.plot(to_plot["data"][0], to_plot["data"][1])
+                if "marker" in to_plot:
+                    axe.plot(to_plot["data"][0], to_plot["data"][1], to_plot["marker"])
+                else:
+                    axe.plot(to_plot["data"][0], to_plot["data"][1])
             elif (to_plot["type"] == "multitrace" or to_plot["type"] == PlotterType.MULTITRACE):
                 for data in to_plot["data"]:
                     axe.plot(data)

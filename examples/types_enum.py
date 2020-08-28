@@ -8,6 +8,12 @@ x = np.linspace(-np.pi, np.pi, 201)
 
 to_plot = [
     {
+        "title": "Plot with markers",
+        "type": PlotterType.PLOT,
+        "data": [[10,11,12,13,14,15,16],[3,4,5,8,4,6,4]],
+        "marker": "-o"
+    },
+    {
         "title": "Plot",
         "type": PlotterType.PLOT,
         "data": [x, np.sin(x)],
