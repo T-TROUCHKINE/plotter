@@ -25,6 +25,7 @@ class PlotterType(Enum):
     MULTISCATTER = 10
     MATRIXSCATTER = 11
     STACKEDBAR = 12
+    MULTIPLOT = 13
 
 class Plotter:
     """Class used for plotting data. This class must take as argument a dictionary containing the description and the data of the figures you want to plot.
@@ -743,6 +744,29 @@ class Plotter:
         opacity = self.get_opacity(to_plot)
         axe.scatter(x_data, y_data, alpha=opacity)
 
+    def plot_multiplot(self, to_plot, axe):
+        """Plot the data from to_plot as a multiplot. The multiplot data must is a
+        table composed of the X values and a set of Y values. The set of Y
+        values is a table of list containing the Y values.
+
+        For instance: "data": [X_values, [Y_values_1, Y_values_2,...]]
+
+        Arguments:
+
+        to_plot - the dictionnary to parse for getting information.
+
+        axe - the subfigure where to work on.
+
+        """
+        marker = None
+        if "marker" in to_plot:
+            marker = to_plot["marker"]
+        x_data = to_plot["data"][0]
+        y_data_set = to_plot["data"][1]
+        for y_data in y_data_set:
+            axe.plot(x_data, y_data, marker)
+
+
     def plot_data(self):
         """Plot the data from the to_plot parameter.
 
@@ -760,10 +784,12 @@ class Plotter:
             elif to_plot["type"] == "trace" or to_plot["type"] == PlotterType.TRACE:
                 axe.plot(to_plot["data"])
             elif to_plot["type"] == "plot" or to_plot["type"] == PlotterType.PLOT:
+                marker = None
                 if "marker" in to_plot:
-                    axe.plot(to_plot["data"][0], to_plot["data"][1], to_plot["marker"])
-                else:
-                    axe.plot(to_plot["data"][0], to_plot["data"][1])
+                    marker = to_plot["marker"]
+                axe.plot(to_plot["data"][0], to_plot["data"][1], marker)
+            elif to_plot["type"] == "multiplot" or to_plot["type"] == PlotterType.MULTIPLOT:
+                self.plot_multiplot(to_plot, axe)
             elif (to_plot["type"] == "multitrace" or to_plot["type"] == PlotterType.MULTITRACE):
                 for data in to_plot["data"]:
                     axe.plot(data)
