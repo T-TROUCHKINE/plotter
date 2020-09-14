@@ -487,6 +487,9 @@ class Plotter:
         for data in to_plot["data"]:
             axe.bar(data_pos, data, w, bottom=previous_data)
             previous_data = data
+        if "x_ticklabels" in to_plot:
+            ind = [x for x in range(len(to_plot["x_ticklabels"]))]
+            axe.set_xticks(ind)
         self.rotate_x_labels(to_plot, axe)
 
     def get_legend_fontsize(self, to_plot):
@@ -597,7 +600,8 @@ class Plotter:
         values_pos = []
         for x in range(dim[0]):
             for y in range(dim[1]):
-                value = matrix[x][y]
+                #value = matrix[x][y]
+                value = matrix.item((x,y))
                 if value != 0:
                     if not value in values:
                         values.append(value)
@@ -717,6 +721,9 @@ class Plotter:
                 scat = axe.scatter(x_data, y_data, c=c_array, vmax=maxi,
                                    vmin=mini, cmap=self.cmap, norm=norm,
                                    alpha=opacity)
+            if "no_colorbar" in to_plot:
+                if to_plot["no_colorbar"]:
+                    return
             colorbar = plt.colorbar(scat, ax=axe, ticks=bounds)
             if "colorbar_fontsize" in to_plot:
                 colorbar.ax.tick_params(labelsize=to_plot["colorbar_fontsize"])
@@ -758,7 +765,7 @@ class Plotter:
         axe - the subfigure where to work on.
 
         """
-        marker = None
+        marker = ""
         if "marker" in to_plot:
             marker = to_plot["marker"]
         x_data = to_plot["data"][0]
@@ -784,7 +791,7 @@ class Plotter:
             elif to_plot["type"] == "trace" or to_plot["type"] == PlotterType.TRACE:
                 axe.plot(to_plot["data"])
             elif to_plot["type"] == "plot" or to_plot["type"] == PlotterType.PLOT:
-                marker = None
+                marker = ""
                 if "marker" in to_plot:
                     marker = to_plot["marker"]
                 axe.plot(to_plot["data"][0], to_plot["data"][1], marker)
