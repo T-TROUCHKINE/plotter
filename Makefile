@@ -1,5 +1,11 @@
 all: readme
 
+package:
+	python setup.py sdist bdist_wheel
+
+upload: clean package
+	twine upload dist/*
+
 readme:
 	pandoc README.md -o README.pdf
 

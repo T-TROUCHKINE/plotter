@@ -5,13 +5,13 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="plotter",
-    version="1.3.12",
+    version="1.3.13",
     author="Thomas Trouchkine",
     author_email="thomas.trouchkine@gmail.com",
     description="Plotting library with descriptive approach",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="http://thomas.trouchkine.com/projects/plotter",
+    url="https://plotter-doc.xyz",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
