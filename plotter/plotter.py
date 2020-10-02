@@ -505,6 +505,12 @@ class Plotter:
         else:
             return "best"
 
+    def get_legend_nb_col(self, to_plot):
+        if "legend_nb_col" in to_plot:
+            return to_plot["legend_nb_col"]
+        else:
+            return 1
+
     def add_legend(self, to_plot, axe):
         """Add a legend to the figure.
 
@@ -514,8 +520,12 @@ class Plotter:
         """
         if "legend" in to_plot:
             fontsize = self.get_legend_fontsize(to_plot)
+            nb_col = self.get_legend_nb_col(to_plot)
             loc = self.get_legend_location(to_plot)
-            axe.legend(to_plot["legend"], prop={"size": fontsize}, loc=loc)
+            if type(loc) is str:
+                axe.legend(to_plot["legend"], prop={"size": fontsize}, loc=loc, ncol=nb_col)
+            elif type(loc) is tuple:
+                axe.legend(to_plot["legend"], prop={"size": fontsize}, bbox_to_anchor=loc, ncol=nb_col)
 
     def get_labels_fontsize(self, to_plot):
         if "labels_fontsize" in to_plot:
