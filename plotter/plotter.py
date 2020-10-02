@@ -26,6 +26,7 @@ class PlotterType(Enum):
     MATRIXSCATTER = 11
     STACKEDBAR = 12
     MULTIPLOT = 13
+    MULTIMATRIXSCATTERBIN = 14
 
 class Plotter:
     """Class used for plotting data. This class must take as argument a dictionary containing the description and the data of the figures you want to plot.
@@ -773,6 +774,47 @@ class Plotter:
         for y_data in y_data_set:
             axe.plot(x_data, y_data, marker)
 
+    def matrix_to_binary_scatter(self, matrix):
+        """Convert a matrix into a set of data usable to display it in a scatter way
+        with a binary representation. In other words, the dots on the scatter will
+        represent non zero values.
+
+        Arguments:
+
+        to_plot - the dictionnary to parse for getting information.
+
+        axe - the subfigure where to work on.
+
+        """
+        dim = matrix.shape
+        x_data = []
+        y_data = []
+        for x in range(dim[0]):
+            for y in range(dim[1]):
+                value = matrix.item((x,y))
+                if value != 0:
+                    x_data.append(x)
+                    y_data.append(y)
+        return (x_data,y_data)
+
+    def plot_multimatrixscatterbin(self, to_plot, axe):
+        """Plot several matrices into multiple scatters with a binary representation.
+        In other words, the dots on the scatter will represent non zero values
+        for every matrices.
+
+        Arguments:
+
+        to_plot - the dictionnary to parse for getting information.
+
+        axe - the subfigure where to work on.
+
+        """
+        x_coef, y_coef = self.add_scatter_image(to_plot, axe)
+        for data_to_plot in to_plot["data"]:
+            data = self.matrix_to_binary_scatter(data_to_plot)
+            x_data = [d*x_coef for d in data[1]]
+            y_data = [d*y_coef for d in data[0]]
+            scat = axe.scatter(x_data, y_data)
 
     def plot_data(self):
         """Plot the data from the to_plot parameter.
@@ -812,6 +854,8 @@ class Plotter:
                 self.plot_matrixscatter(to_plot, axe)
             elif to_plot["type"] == "stackedbar" or to_plot["type"] == PlotterType.STACKEDBAR:
                 self.plot_stackedbar(to_plot, axe)
+            elif to_plot["type"] in ["multimatrixscatterbin", PlotterType.MULTIMATRIXSCATTERBIN]:
+                self.plot_multimatrixscatterbin(to_plot, axe)
             self.add_legend(to_plot, axe)
             self.revert_axes(to_plot, axe)
             self.add_text(to_plot, axe)

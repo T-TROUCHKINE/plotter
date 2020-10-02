@@ -81,6 +81,12 @@ to_plot = [
         "type": "matrixscatter",
         "data": np.random.randint(0, 10, (40, 40))
     },
+    {
+        "title": "Multiple matrix scatter binary",
+        "type": "multimatrixscatterbin",
+        "data": [np.matrix([[0,1,0,0],[7,1,2,0],[0,0,2,0],[0,1,0,0]]),
+                 np.matrix([[1,0,4,4],[0,0,0,3],[7,0,0,1],[4,0,0,8]])]
+    },
 ]
 
 pl = Plotter(to_plot)
