@@ -679,6 +679,11 @@ class Plotter:
         axe - the subfigure where to work on.
 
         """
+        data = None
+        if type(to_plot["data"]) is list:
+            data = to_plot["data"][0]
+        else:
+            data = to_plot["data"]
         x_coef = 1
         y_coef = 1
         if "image" in to_plot:
@@ -687,8 +692,8 @@ class Plotter:
                 if to_plot["scale_to_image"]:
                     img_width = img_shape[1]
                     img_height = img_shape[0]
-                    mat_width = to_plot["data"].shape[1]-1
-                    mat_height = to_plot["data"].shape[0]-1
+                    mat_width = data.shape[1]-1
+                    mat_height = data.shape[0]-1
                     x_coef = img_width/mat_width
                     y_coef = img_height/mat_height
                 if "x_scale" in to_plot:
