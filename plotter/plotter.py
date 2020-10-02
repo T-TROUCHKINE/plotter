@@ -810,11 +810,12 @@ class Plotter:
 
         """
         x_coef, y_coef = self.add_scatter_image(to_plot, axe)
+        opacity = self.get_opacity(to_plot)
         for data_to_plot in to_plot["data"]:
             data = self.matrix_to_binary_scatter(data_to_plot)
             x_data = [d*x_coef for d in data[1]]
             y_data = [d*y_coef for d in data[0]]
-            scat = axe.scatter(x_data, y_data)
+            scat = axe.scatter(x_data, y_data, opacity=opacity)
 
     def plot_data(self):
         """Plot the data from the to_plot parameter.
