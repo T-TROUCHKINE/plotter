@@ -815,7 +815,7 @@ class Plotter:
             data = self.matrix_to_binary_scatter(data_to_plot)
             x_data = [d*x_coef for d in data[1]]
             y_data = [d*y_coef for d in data[0]]
-            scat = axe.scatter(x_data, y_data, opacity=opacity)
+            scat = axe.scatter(x_data, y_data, alpha=opacity)
 
     def plot_data(self):
         """Plot the data from the to_plot parameter.
