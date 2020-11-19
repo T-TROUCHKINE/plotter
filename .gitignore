@@ -7,3 +7,9 @@ examples/tikz/*.aux
 examples/tikz/*.log
 examples/tikz/*.pdf
 examples/tikz/tikz_figure.tex
+doc/_site
+doc/.sass-cache
+doc/.jekyll-cache
+doc/.jekyll-metadata
+doc/vendor
+doc/Makefile

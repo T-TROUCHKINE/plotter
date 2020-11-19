@@ -1,13 +1,14 @@
 # Plotter
 
+## Generate this README
+- in html: `make html-readme` then open `README.html` in web browser, `firefox README.html` for instance.
+- in pdf: `make pdf-readme`
+
 ## Description
 Plotter is a plotting library based on `matplotlib`. It intends to simplify the plotting of data in Python by creating a descriptive approach for plots. The plots can be static or dynamic.
 
-## Documentation
-https://plotter-doc.xyz
-
 ## Source code location
-https://github.com/T-TROUCHKINE/plotter
+[https://github.com/T-TROUCHKINE/plotter](https://github.com/T-TROUCHKINE/plotter)
 
 ## Prerequisities
 ### Linux packages
@@ -21,7 +22,8 @@ https://github.com/T-TROUCHKINE/plotter
 - numpy : `pip install numpy`
 
 **GTK3**  
-For using GTK3 modules see PyGObject documentation (https://pygobject.readthedocs.io/en/latest/index.html)
+For using GTK3 modules: see PyGObject documentation:
+[https://pygobject.readthedocs.io/en/latest/index.html](https://pygobject.readthedocs.io/en/latest/index.html)
 
 ## Installation
 ### From PIP
@@ -78,3 +80,20 @@ Gives:
 
 ![Second example](img/ex2.png)
 
+## Documentation
+Online documentation at [https://plotter-doc.xyz](https://plotter-doc.xyz)
+
+### Build documentation locally
+
+#### Requirements
+- jekyll ([https://jekyllrb.com/](https://jekyllrb.com/))
+- bundler ([https://bundler.io/](https://bundler.io/))
+
+#### Command
+```sh
+cd doc
+bundle exec jekyll build
+```
+
+Then the documentation is accessible in the `doc/_site/` directory. Usable using
+a web browser for instance: `firefox doc/_site/index.html`

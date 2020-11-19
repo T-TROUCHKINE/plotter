@@ -1,13 +1,15 @@
-all: readme
-
 package:
 	python setup.py sdist bdist_wheel
 
 upload: clean package
 	twine upload dist/*
+	cd doc && make upload
 
-readme:
+pdf-readme:
 	pandoc README.md -o README.pdf
+
+html-readme:
+	pandoc -s README.md -o README.html
 
 clean:
 	rm -rf *.pdf
@@ -16,3 +18,6 @@ clean:
 	rm -rf MANIFEST
 	rm -rf build
 	rm -rf *.egg-info
+	rm -rf doc/_site
+	rm -rf README.pdf
+	rm -rf README.html
