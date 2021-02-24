@@ -875,6 +875,37 @@ class Plotter:
             self.add_legend(to_plot, axe)
             self.revert_axes(to_plot, axe)
             self.add_text(to_plot, axe)
+            self.add_lines(to_plot, axe)
+
+    def add_lines(self, to_plot, axe):
+        """Add horizontal (no implemented) and vertical lines to a figure.
+
+        Arguments:
+
+        to_plot - the dictionnary to parse for getting information.
+
+        axe - the subfigure where to work on.
+
+        """
+        if "vlines" in to_plot:
+            self.add_vlines(to_plot, axe)
+
+    def add_vlines(self, to_plot, axe):
+        """Add vertical lines to a figure.
+
+        Arguments:
+
+        to_plot - the dictionnary to parse for getting information.
+
+        axe - the subfigure where to work on.
+
+        """
+        ymin = 0
+        ymax = 1
+        color = "black"
+        if "vline_color" in to_plot:
+            color = to_plot["vline_color"]
+        axe.vlines(to_plot["vlines"], ymin, ymax, color=color, transform=axe.get_xaxis_transform())
 
     def add_text(self, to_plot, axe):
         if "text" in to_plot:
