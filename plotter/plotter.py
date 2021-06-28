@@ -273,8 +273,8 @@ class Plotter:
                 else:
                     ind = np.arange(1, len(self.to_plot[i]["x_ticklabels"]) + 1)
                     axe.set_xticks(ind)
-                axe.set_xticklabels(wrap_str(str(label), 10) for label in
-                                    self.to_plot[i]["x_ticklabels"])
+                labels = [wrap_str(str(label), 10) for label in self.to_plot[i]["x_ticklabels"]]
+                axe.set_xticklabels(labels)
 
             if "y_ticklabels" in self.to_plot[i]:
                 if "y_ticklabels_position" in self.to_plot[i]:
@@ -473,6 +473,8 @@ class Plotter:
                 axe.bar(x_pos, data, width=w, align="center")
             ind = [x + 1 + 2*w*n for x in range(len(to_plot["x_ticklabels"]))]
             axe.set_xticks(ind)
+            labels = [wrap_str(str(label), 10) for label in to_plot["x_ticklabels"]]
+            axe.set_xticklabels(labels)
         self.rotate_x_labels(to_plot, axe)
 
     def plot_stackedbar(self, to_plot, axe):
