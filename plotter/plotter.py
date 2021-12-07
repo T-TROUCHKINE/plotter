@@ -736,8 +736,7 @@ class Plotter:
                 c_array = [value]*len(data[0])
                 x_data = [d*x_coef for d in data[1]]
                 y_data = [d*y_coef for d in data[0]]
-                scat = axe.scatter(x_data, y_data, c=c_array, vmax=maxi,
-                                   vmin=mini, cmap=self.cmap, norm=norm,
+                scat = axe.scatter(x_data, y_data, c=c_array, cmap=self.cmap, norm=norm,
                                    alpha=opacity)
             if "no_colorbar" in to_plot:
                 if to_plot["no_colorbar"]:
