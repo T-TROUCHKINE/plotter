@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="plotter",
-    version="1.3.19",
+    version="1.3.20",
     author="Thomas Trouchkine",
     author_email="thomas.trouchkine@gmail.com",
     description="Plotting library with descriptive approach",
