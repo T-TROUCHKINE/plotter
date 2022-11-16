@@ -3,7 +3,6 @@ package:
 
 upload: clean package
 	twine upload dist/*
-	cd doc && make upload
 
 pdf-readme:
 	pandoc README.md -o README.pdf
